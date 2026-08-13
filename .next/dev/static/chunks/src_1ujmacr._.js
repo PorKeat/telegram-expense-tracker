@@ -1425,7 +1425,7 @@ function Home({ expenses, currency, exchangeRate, spendLimit, allCategories = []
                         style: {
                             marginTop: '32px',
                             paddingTop: '24px',
-                            borderTop: '1px solid var(--surface-glass-border)'
+                            borderTop: '1px solid var(--surface-border)'
                         },
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1446,7 +1446,8 @@ function Home({ expenses, currency, exchangeRate, spendLimit, allCategories = []
                                         style: {
                                             marginTop: '6px',
                                             fontSize: '20px',
-                                            fontWeight: 400
+                                            fontWeight: 400,
+                                            color: 'var(--text-primary)'
                                         },
                                         children: [
                                             currency,
@@ -1470,7 +1471,7 @@ function Home({ expenses, currency, exchangeRate, spendLimit, allCategories = []
                                 style: {
                                     width: '1px',
                                     height: '40px',
-                                    backgroundColor: 'var(--surface-glass-border)'
+                                    backgroundColor: 'var(--surface-border)'
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Home.jsx",
@@ -1565,7 +1566,7 @@ function Home({ expenses, currency, exchangeRate, spendLimit, allCategories = []
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 style: {
                                     height: '6px',
-                                    backgroundColor: 'var(--surface-glass-heavy)',
+                                    backgroundColor: 'var(--surface-elevated)',
                                     borderRadius: '3px',
                                     overflow: 'hidden'
                                 },

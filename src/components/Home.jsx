@@ -50,12 +50,12 @@ export default function Home({ expenses, currency, exchangeRate, spendLimit, all
           {currency}{(todayTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
         </h1>
         
-        <div className="flex-row gap-md" style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--surface-glass-border)' }}>
+        <div className="flex-row gap-md" style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--surface-border)' }}>
           <div className="flex-col" style={{ flex: 1 }}>
             <p className="text-tiny">This Week</p>
-            <h3 style={{ marginTop: '6px', fontSize: '20px', fontWeight: 400 }}>{currency}{(weekTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
+            <h3 style={{ marginTop: '6px', fontSize: '20px', fontWeight: 400, color: 'var(--text-primary)' }}>{currency}{(weekTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
           </div>
-          <div style={{ width: '1px', height: '40px', backgroundColor: 'var(--surface-glass-border)' }}></div>
+          <div style={{ width: '1px', height: '40px', backgroundColor: 'var(--surface-border)' }}></div>
           <div className="flex-col" style={{ flex: 1 }}>
             <p className="text-tiny">This Month</p>
             <h3 style={{ marginTop: '4px', color: isOverLimit ? 'var(--danger-color)' : 'inherit' }}>
@@ -72,7 +72,7 @@ export default function Home({ expenses, currency, exchangeRate, spendLimit, all
                 {progressPercent.toFixed(0)}% of {currency}{(limit * exchangeRate).toLocaleString()}
               </span>
             </div>
-            <div style={{ height: '6px', backgroundColor: 'var(--surface-glass-heavy)', borderRadius: '3px', overflow: 'hidden' }}>
+            <div style={{ height: '6px', backgroundColor: 'var(--surface-elevated)', borderRadius: '3px', overflow: 'hidden' }}>
               <div 
                 style={{ 
                   height: '100%', 
