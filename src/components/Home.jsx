@@ -1,5 +1,5 @@
 import { format, isToday, isThisWeek, isThisMonth, parseISO } from 'date-fns';
-import { Coffee, ShoppingBag, Car, Home as HomeIcon, Zap, MoreHorizontal, AlertTriangle } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 export default function Home({ expenses, currency, exchangeRate, spendLimit, allCategories = [] }) {
   // Calculations
@@ -22,19 +22,8 @@ export default function Home({ expenses, currency, exchangeRate, spendLimit, all
   const recentExpenses = expenses.slice(0, 5);
 
   const getIcon = (category) => {
-    const customCat = allCategories.find(c => c.name === category && c.isCustom);
-    if (customCat) {
-      return <span style={{ fontSize: '24px' }}>{customCat.icon}</span>;
-    }
-
-    switch(category) {
-      case 'Food & Drink': return <Coffee size={24} />;
-      case 'Shopping': return <ShoppingBag size={24} />;
-      case 'Transport': return <Car size={24} />;
-      case 'Housing': return <HomeIcon size={24} />;
-      case 'Utilities': return <Zap size={24} />;
-      default: return <MoreHorizontal size={24} />;
-    }
+    const cat = allCategories.find(c => c.name === category);
+    return <span style={{ fontSize: '24px' }}>{cat ? cat.icon : '📦'}</span>;
   };
 
   return (

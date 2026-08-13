@@ -95,7 +95,7 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
               <select value={category} onChange={e => setCategory(e.target.value)}>
                 {allCategories.map(c => (
                   <option key={c.name} value={c.name}>
-                    {c.isCustom ? `${c.icon} ${c.name}` : c.name}
+                    {c.icon} {c.name}
                   </option>
                 ))}
               </select>

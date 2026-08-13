@@ -32,12 +32,12 @@ function App() {
   const supabase = createClient();
 
   const defaultCategories = [
-    { name: 'Food & Drink', iconType: 'lucide' },
-    { name: 'Shopping', iconType: 'lucide' },
-    { name: 'Transport', iconType: 'lucide' },
-    { name: 'Housing', iconType: 'lucide' },
-    { name: 'Utilities', iconType: 'lucide' },
-    { name: 'Other', iconType: 'lucide' }
+    { name: 'Food & Drink', icon: '☕' },
+    { name: 'Shopping', icon: '🛍️' },
+    { name: 'Transport', icon: '🚗' },
+    { name: 'Housing', icon: '🏠' },
+    { name: 'Utilities', icon: '⚡' },
+    { name: 'Other', icon: '📦' }
   ];
 
   const allCategories = [...defaultCategories, ...customCategories];

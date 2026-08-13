@@ -1,5 +1,5 @@
 import { format, parseISO } from 'date-fns';
-import { Coffee, ShoppingBag, Car, Home, Zap, MoreHorizontal, Trash2, Edit2 } from 'lucide-react';
+import { Edit2, Trash2 } from 'lucide-react';
 
 export default function History({ expenses, currency, exchangeRate, onEdit, onDelete, allCategories = [] }) {
   
@@ -17,19 +17,8 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
   }, {});
 
   const getIcon = (category) => {
-    const customCat = allCategories.find(c => c.name === category && c.isCustom);
-    if (customCat) {
-      return <span style={{ fontSize: '24px' }}>{customCat.icon}</span>;
-    }
-
-    switch(category) {
-      case 'Food & Drink': return <Coffee size={24} />;
-      case 'Shopping': return <ShoppingBag size={24} />;
-      case 'Transport': return <Car size={24} />;
-      case 'Housing': return <Home size={24} />;
-      case 'Utilities': return <Zap size={24} />;
-      default: return <MoreHorizontal size={24} />;
-    }
+    const cat = allCategories.find(c => c.name === category);
+    return <span style={{ fontSize: '24px' }}>{cat ? cat.icon : '📦'}</span>;
   };
 
   return (
