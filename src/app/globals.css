@@ -1,18 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Ultra-Dark Emerald Background */
-  --bg-gradient: radial-gradient(circle at top, #0c2117, #07150e 60%, #040a07 100%);
-  --emerald-raw: #07150e;
+  /* Ultra-Dark Background with Aurora Glows */
+  --bg-gradient: radial-gradient(circle at top left, rgba(228, 195, 108, 0.15) 0%, transparent 40%),
+                 radial-gradient(circle at bottom right, rgba(12, 33, 23, 0.6) 0%, transparent 60%),
+                 linear-gradient(135deg, #050806 0%, #0a0c0a 100%);
+  --emerald-raw: #050806;
   
-  /* Warm Dark Brown Surfaces */
-  --surface-solid: #221715;
-  --surface-elevated: #2f211e;
-  --surface-border: #3b2a26;
+  /* Glass Surfaces */
+  --surface-solid: rgba(18, 22, 20, 0.5);
+  --surface-elevated: rgba(35, 42, 38, 0.6);
+  --surface-border: rgba(255, 255, 255, 0.08);
+  --surface-glow: rgba(228, 195, 108, 0.05);
   
   /* Luminous Gold Action Color */
   --primary-color: #e4c36c;
-  --primary-glow: rgba(228, 195, 108, 0.3);
+  --primary-glow: rgba(228, 195, 108, 0.4);
+  --primary-gradient: linear-gradient(135deg, #f9e29a 0%, #d4a73e 100%);
   
   /* High-Contrast Typography */
   --text-primary: #f9f6ed; /* Cream for high legibility */
@@ -43,21 +47,25 @@
   --spacing-xxl: 48px;
 }
 
-/* Light mode override - Modern Elegance Light */
+/* Light mode override - Aurora Light */
 :root.light-mode {
-  --bg-gradient: radial-gradient(circle at top, #f4f0e6, #ebe5d5 60%, #ded7c2 100%);
-  --emerald-raw: #ebe5d5;
+  --bg-gradient: radial-gradient(circle at top left, rgba(228, 195, 108, 0.3) 0%, transparent 50%),
+                 radial-gradient(circle at bottom right, rgba(12, 33, 23, 0.2) 0%, transparent 60%),
+                 linear-gradient(135deg, #f6f4ef 0%, #e8e4d9 100%);
+  --emerald-raw: #f6f4ef;
   
-  --surface-solid: #ffffff;
-  --surface-elevated: #f9f6ed;
-  --surface-border: #dcd3bd;
+  --surface-solid: rgba(255, 255, 255, 0.6);
+  --surface-elevated: rgba(255, 255, 255, 0.8);
+  --surface-border: rgba(0, 0, 0, 0.05);
+  --surface-glow: rgba(228, 195, 108, 0.1);
   
-  --primary-color: #0c2117; /* Deep Emerald for actions in light mode */
-  --primary-glow: rgba(12, 33, 23, 0.15);
+  --primary-color: #0c2117; 
+  --primary-glow: rgba(12, 33, 23, 0.2);
+  --primary-gradient: linear-gradient(135deg, #173b2a 0%, #07150e 100%);
   
-  --text-primary: #171110; /* Almost black warm brown */
-  --text-secondary: #60514a; /* Muted brown */
-  --text-tertiary: #98877e; /* Very muted */
+  --text-primary: #1a1c1a; 
+  --text-secondary: #5c635e; 
+  --text-tertiary: #9ea6a1;
 
   --danger-color: #d93838;
 
@@ -104,14 +112,16 @@ h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.2px; color: var(--tex
 .text-small { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
 .text-tiny { font-size: 12px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; }
 
-/* Structural Cards (Replacing glass-card with solid elegant cards) */
+/* True Glassmorphism Cards */
 .glass-card, .card {
   background: var(--surface-solid);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  transition: border-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05), inset 0 -1px 20px var(--surface-glow);
+  transition: all 0.3s ease;
 }
 
 :root.light-mode .glass-card, :root.light-mode .card {
@@ -120,9 +130,11 @@ h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.2px; color: var(--tex
 
 .glass-pill {
   background: var(--surface-elevated);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--surface-border);
   border-radius: var(--radius-pill);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.03);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 :root.light-mode .glass-pill {
@@ -131,13 +143,13 @@ h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.2px; color: var(--tex
 
 /* Buttons */
 .button {
-  background: var(--primary-color);
+  background: var(--primary-gradient);
   color: var(--emerald-raw);
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   padding: 18px var(--spacing-lg);
   border-radius: var(--radius-md);
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   width: 100%;
   transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -145,7 +157,8 @@ h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.2px; color: var(--tex
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: 0 8px 24px var(--primary-glow);
+  box-shadow: 0 8px 30px var(--primary-glow), inset 0 -4px 10px rgba(0,0,0,0.15), inset 0 2px 10px rgba(255,255,255,0.4);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
   outline: none;
 }
 
@@ -154,15 +167,18 @@ h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.2px; color: var(--tex
 }
 
 .button:active {
-  transform: scale(0.96);
-  box-shadow: 0 2px 8px var(--primary-glow);
+  transform: scale(0.96) translateY(2px);
+  box-shadow: 0 2px 10px var(--primary-glow), inset 0 4px 12px rgba(0,0,0,0.2);
 }
 
 .button-secondary { 
   background: var(--surface-solid); 
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   color: var(--primary-color); 
   box-shadow: none; 
   border: 1px solid var(--surface-border);
+  text-shadow: none;
 }
 
 :root.light-mode .button-secondary {
@@ -206,11 +222,12 @@ input, select {
   outline: none;
   transition: all 0.3s ease;
   -webkit-appearance: none;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.1);
 }
 input:focus, select:focus { 
   border-color: var(--primary-color); 
   background: var(--surface-solid);
-  box-shadow: 0 0 0 3px var(--primary-glow);
+  box-shadow: 0 0 0 3px var(--primary-glow), inset 0 2px 6px rgba(0,0,0,0.1);
 }
 input::placeholder { color: var(--text-tertiary); font-weight: 400; }
 
@@ -273,16 +290,16 @@ input::placeholder { color: var(--text-tertiary); font-weight: 400; }
 }
 
 .fab {
-  width: 60px;
-  height: 60px;
-  border-radius: 30px;
-  background: var(--primary-color);
+  width: 64px;
+  height: 64px;
+  border-radius: 32px;
+  background: var(--primary-gradient);
   color: var(--emerald-raw);
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 8px 24px var(--primary-glow);
+  box-shadow: 0 12px 30px var(--primary-glow), inset 0 -4px 10px rgba(0,0,0,0.15), inset 0 2px 10px rgba(255,255,255,0.4);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   outline: none;
@@ -298,6 +315,7 @@ input::placeholder { color: var(--text-tertiary); font-weight: 400; }
 }
 .fab:active {
   transform: translateY(2px) scale(0.95);
+  box-shadow: 0 4px 15px var(--primary-glow), inset 0 4px 12px rgba(0,0,0,0.2);
 }
 
 /* Modals / Screens */
@@ -314,14 +332,17 @@ input::placeholder { color: var(--text-tertiary); font-weight: 400; }
 }
 
 .bottom-sheet {
-  background: var(--bg-gradient);
-  border-top-left-radius: 24px;
-  border-top-right-radius: 24px;
+  background: var(--surface-solid);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border-top: 1px solid var(--surface-border);
+  border-top-left-radius: 32px;
+  border-top-right-radius: 32px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
   animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+  box-shadow: 0 -20px 60px rgba(0,0,0,0.5);
   overflow: hidden;
 }
 
