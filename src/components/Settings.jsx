@@ -300,15 +300,22 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
 
         <div className="flex-row space-between" style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border-color)' }}>
           <div className="flex-col">
-            <span style={{ fontWeight: 500 }}>Monthly Limit (USD)</span>
+            <span style={{ fontWeight: 500 }}>Monthly Limit ({currency})</span>
             <span className="text-small">Get alerted if you overspend</span>
           </div>
           <div style={{ width: '120px' }}>
             <input 
               type="number" 
-              value={spendLimit}
-              onChange={e => setSpendLimit(e.target.value)}
-              placeholder="e.g. 500"
+              value={spendLimit ? (parseFloat(spendLimit) * (currency === '៛' ? customExchangeRate : 1)).toString() : ''}
+              onChange={e => {
+                const val = parseFloat(e.target.value);
+                if (isNaN(val)) {
+                  setSpendLimit('');
+                } else {
+                  setSpendLimit((val / (currency === '៛' ? customExchangeRate : 1)).toString());
+                }
+              }}
+              placeholder={`e.g. ${currency === '៛' ? '2000000' : '500'}`}
               style={{ padding: '8px', textAlign: 'right' }}
             />
           </div>
