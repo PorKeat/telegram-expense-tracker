@@ -59,22 +59,11 @@ body {
   background-color: var(--bg-color);
   flex-direction: column;
   width: 100%;
-  max-width: 430px;
   height: 100vh;
   max-height: 100vh;
   display: flex;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 0 40px #00000080;
-}
-
-@media (min-width: 431px) {
-  #root {
-    border: 8px solid #333;
-    border-radius: 40px;
-    height: 90vh;
-    max-height: 850px;
-  }
 }
 
 h1 {

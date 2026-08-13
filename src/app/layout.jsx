@@ -13,7 +13,9 @@ export default function RootLayout({ children }) {
         <script src="https://telegram.org/js/telegram-web-app.js" async></script>
       </head>
       <body suppressHydrationWarning>
-        {children}
+        <div id="root">
+          {children}
+        </div>
       </body>
     </html>
   );
