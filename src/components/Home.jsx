@@ -34,7 +34,7 @@ export default function Home({ expenses, currency, exchangeRate, spendLimit, all
       </div>
 
       <div className="glass-card" style={{ marginBottom: 'var(--spacing-lg)' }}>
-        <p className="text-secondary" style={{ textTransform: 'uppercase', letterSpacing: '1px', fontSize: '12px', fontWeight: 600 }}>Total Balance</p>
+        <p className="text-secondary" style={{ textTransform: 'uppercase', letterSpacing: '1px', fontSize: '12px', fontWeight: 600 }}>Today's Spend</p>
         <h1 style={{ fontSize: '48px', margin: '8px 0', color: 'var(--text-primary)', fontWeight: 300, letterSpacing: '-2px' }}>
           {currency}{(todayTotal * exchangeRate).toLocaleString(undefined, (currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0}))}
         </h1>

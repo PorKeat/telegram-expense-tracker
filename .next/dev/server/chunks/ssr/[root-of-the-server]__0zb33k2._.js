@@ -1466,7 +1466,7 @@ function Home({ expenses, currency, exchangeRate, spendLimit, allCategories = []
                             fontSize: '12px',
                             fontWeight: 600
                         },
-                        children: "Total Balance"
+                        children: "Today's Spend"
                     }, void 0, false, {
                         fileName: "[project]/src/components/Home.jsx",
                         lineNumber: 37,
