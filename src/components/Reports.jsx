@@ -1,26 +1,59 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { parseISO, isThisWeek, isThisMonth, isThisYear, differenceInDays, startOfWeek, startOfMonth, startOfYear } from 'date-fns';
+import { TrendingUp, Receipt, Trophy, Calendar } from 'lucide-react';
 
-export default function Reports({ expenses, currency, exchangeRate }) {
+export default function Reports({ expenses, currency, exchangeRate, allCategories = [] }) {
   const [timeframe, setTimeframe] = useState('month');
 
-  // Simple aggregation for categories
-  const categoryTotals = expenses.reduce((acc, expense) => {
-    acc[expense.category] = (acc[expense.category] || 0) + expense.total;
-    return acc;
-  }, {});
+  // Filter expenses by timeframe
+  const filteredExpenses = useMemo(() => {
+    return expenses.filter(expense => {
+      const date = parseISO(expense.date);
+      if (timeframe === 'week') return isThisWeek(date, { weekStartsOn: 1 });
+      if (timeframe === 'month') return isThisMonth(date);
+      if (timeframe === 'year') return isThisYear(date);
+      return true;
+    });
+  }, [expenses, timeframe]);
 
-  // Sort by highest spending
-  const sortedCategories = Object.entries(categoryTotals)
-    .sort((a, b) => b[1] - a[1]);
+  // Aggregate categories
+  const categoryTotals = useMemo(() => {
+    return filteredExpenses.reduce((acc, expense) => {
+      acc[expense.category] = (acc[expense.category] || 0) + expense.total;
+      return acc;
+    }, {});
+  }, [filteredExpenses]);
 
+  const sortedCategories = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]);
   const highestCategory = sortedCategories.length > 0 ? sortedCategories[0] : null;
-  const totalSpending = expenses.reduce((sum, e) => sum + e.total, 0);
+  const totalSpending = filteredExpenses.reduce((sum, e) => sum + e.total, 0);
   const maxCategoryTotal = highestCategory ? highestCategory[1] : 1;
+  const biggestExpense = filteredExpenses.length > 0 ? Math.max(...filteredExpenses.map(e => e.total)) : 0;
+  
+  // Calculate Daily Average
+  const dailyAverage = useMemo(() => {
+    if (totalSpending === 0) return 0;
+    const now = new Date();
+    let daysPassed = 1;
+    if (timeframe === 'week') daysPassed = differenceInDays(now, startOfWeek(now, { weekStartsOn: 1 })) + 1;
+    if (timeframe === 'month') daysPassed = differenceInDays(now, startOfMonth(now)) + 1;
+    if (timeframe === 'year') daysPassed = differenceInDays(now, startOfYear(now)) + 1;
+    return totalSpending / Math.max(daysPassed, 1);
+  }, [totalSpending, timeframe]);
+
+  const getIcon = (categoryName) => {
+    const cat = allCategories.find(c => c.name === categoryName);
+    return cat ? cat.icon : '📦';
+  };
+
+  const formatMoney = (amount) => {
+    return `${currency}${(amount * exchangeRate).toLocaleString(undefined, (currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0}))}`;
+  };
 
   return (
     <div className="app-content">
       <div className="header" style={{ paddingTop: '20px' }}>
-        <h2>Reports</h2>
+        <h2>Analytics Dashboard</h2>
       </div>
 
       <div className="flex-row gap-sm" style={{ marginBottom: '24px' }}>
@@ -49,40 +82,84 @@ export default function Reports({ expenses, currency, exchangeRate }) {
         ))}
       </div>
 
-      <div className="glass-card flex-col" style={{ marginBottom: '24px', alignItems: 'center', textAlign: 'center' }}>
-        <p className="text-secondary">Total Spending ({timeframe})</p>
-        <h1 style={{ fontSize: '40px', margin: '8px 0', color: 'var(--text-primary)' }}>
-          {currency}{(totalSpending * exchangeRate).toLocaleString(undefined, (currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0}))}
+      {/* Main Total Card */}
+      <div className="glass-card flex-col" style={{ marginBottom: '16px', alignItems: 'center', textAlign: 'center', padding: '32px 16px' }}>
+        <p className="text-tiny" style={{ letterSpacing: '1px' }}>Total Spending ({timeframe})</p>
+        <h1 style={{ fontSize: '48px', margin: '8px 0', color: 'var(--primary-color)', textShadow: '0 0 20px var(--primary-glow)' }}>
+          {formatMoney(totalSpending)}
         </h1>
-        {highestCategory && (
-          <p className="text-small" style={{ marginTop: '8px' }}>
-            Highest spend on <span style={{ color: 'var(--primary-color)' }}>{highestCategory[0]}</span>
-          </p>
+      </div>
+
+      {/* 2x2 KPI Grid */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+        <div className="glass-card flex-col gap-sm" style={{ padding: '16px' }}>
+          <div className="flex-row gap-xs text-secondary"><Calendar size={16} /> <span className="text-tiny">Daily Avg</span></div>
+          <div style={{ fontSize: '20px', fontWeight: 600 }}>{formatMoney(dailyAverage)}</div>
+        </div>
+        <div className="glass-card flex-col gap-sm" style={{ padding: '16px' }}>
+          <div className="flex-row gap-xs text-secondary"><Receipt size={16} /> <span className="text-tiny">Transactions</span></div>
+          <div style={{ fontSize: '20px', fontWeight: 600 }}>{filteredExpenses.length}</div>
+        </div>
+        <div className="glass-card flex-col gap-sm" style={{ padding: '16px' }}>
+          <div className="flex-row gap-xs text-secondary"><TrendingUp size={16} /> <span className="text-tiny">Biggest Expense</span></div>
+          <div style={{ fontSize: '20px', fontWeight: 600, color: 'var(--danger-color)' }}>{formatMoney(biggestExpense)}</div>
+        </div>
+        <div className="glass-card flex-col gap-sm" style={{ padding: '16px' }}>
+          <div className="flex-row gap-xs text-secondary"><Trophy size={16} /> <span className="text-tiny">Top Category</span></div>
+          <div style={{ fontSize: '20px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            {highestCategory ? highestCategory[0] : '-'}
+          </div>
+        </div>
+      </div>
+
+      {/* Vertical Chart */}
+      <h3 style={{ marginBottom: '16px', paddingLeft: '4px' }}>Top Categories</h3>
+      <div className="glass-card" style={{ marginBottom: '24px', height: '220px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', padding: '24px 16px 16px 16px', gap: '12px' }}>
+        {sortedCategories.length === 0 ? (
+          <div className="text-secondary" style={{ width: '100%', textAlign: 'center', alignSelf: 'center' }}>No data for this period.</div>
+        ) : (
+          sortedCategories.slice(0, 5).map(([category, amount]) => {
+            const percentage = (amount / maxCategoryTotal) * 100;
+            return (
+              <div key={category} className="flex-col" style={{ alignItems: 'center', gap: '12px', height: '100%', justifyContent: 'flex-end', flex: 1 }}>
+                <span className="text-tiny" style={{ fontSize: '10px', color: 'var(--primary-color)' }}>{Math.round(percentage)}%</span>
+                <div style={{ width: '100%', maxWidth: '32px', height: '100%', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', display: 'flex', alignItems: 'flex-end', padding: '4px', boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.1)' }}>
+                  <div style={{ 
+                    width: '100%', 
+                    height: `${percentage}%`, 
+                    background: 'var(--primary-gradient)',
+                    borderRadius: '12px',
+                    boxShadow: '0 0 15px var(--primary-glow)',
+                    transition: 'height 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)'
+                  }} />
+                </div>
+                <div style={{ fontSize: '20px' }}>{getIcon(category)}</div>
+              </div>
+            );
+          })
         )}
       </div>
 
-      <h3 style={{ marginBottom: '16px' }}>Category Breakdown</h3>
-      <div className="glass-card flex-col gap-lg">
+      {/* Detailed Breakdown */}
+      <h3 style={{ marginBottom: '16px', paddingLeft: '4px' }}>Detailed Breakdown</h3>
+      <div className="glass-card flex-col gap-md">
         {sortedCategories.length === 0 ? (
           <p className="text-secondary text-center">No data for this period.</p>
         ) : (
           sortedCategories.map(([category, amount]) => {
             const percentage = (amount / maxCategoryTotal) * 100;
             return (
-              <div key={category} className="flex-col gap-xs">
-                <div className="flex-row space-between">
-                  <span style={{ fontSize: '14px', fontWeight: 500 }}>{category}</span>
-                  <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{currency}{(amount * exchangeRate).toLocaleString(undefined, (currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0}))}</span>
+              <div key={category} className="flex-row space-between" style={{ padding: '8px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <div className="flex-row gap-sm">
+                  <div style={{ width: '40px', height: '40px', borderRadius: '20px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+                    {getIcon(category)}
+                  </div>
+                  <div className="flex-col">
+                    <span style={{ fontSize: '14px', fontWeight: 600 }}>{category}</span>
+                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{Math.round(percentage)}% of top spend</span>
+                  </div>
                 </div>
-                <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--surface-color-elevated)', borderRadius: '4px', overflow: 'hidden' }}>
-                  <div style={{ 
-                    width: `${percentage}%`, 
-                    height: '100%', 
-                    background: 'var(--primary-gradient)',
-                    borderRadius: '4px',
-                    boxShadow: '0 0 15px var(--primary-glow)'
-                  }} />
-                </div>
+                <span style={{ fontSize: '16px', fontWeight: 500, color: 'var(--primary-color)' }}>{formatMoney(amount)}</span>
               </div>
             );
           })
