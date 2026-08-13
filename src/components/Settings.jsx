@@ -3,7 +3,7 @@ import { Download, Trash2, DollarSign, Coins, Sun, Moon, Palette, Plus, X, Uploa
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 
-export default function Settings({ currency, setCurrency, customExchangeRate, setCustomExchangeRate, spendLimit, setSpendLimit, customCategories, setCustomCategories, theme, setTheme, expenses, onWipeData, onImportData }) {
+export default function Settings({ currency, setCurrency, customExchangeRate, setCustomExchangeRate, spendLimit, setSpendLimit, customCategories, setCustomCategories, theme, setTheme, expenses, onWipeData, onImportData, setDialogConfig }) {
   const [newCatName, setNewCatName] = useState('');
   const [newCatEmoji, setNewCatEmoji] = useState('🎮');
   const [pendingImport, setPendingImport] = useState(null);
@@ -43,7 +43,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
     if (parsedExpenses.length > 0) {
       setPendingImport(parsedExpenses);
     } else {
-      alert('No valid expenses found in the file.');
+      setDialogConfig({ type: 'alert', message: 'No valid expenses found in the file.', onConfirm: () => {} });
     }
   };
 
@@ -59,7 +59,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
         skipEmptyLines: true,
         complete: function(results) {
           if (results.errors.length > 0 && results.data.length === 0) {
-            alert('Failed to parse CSV file.');
+            setDialogConfig({ type: 'alert', message: 'Failed to parse CSV file.', onConfirm: () => {} });
             return;
           }
           processParsedData(results.data);
@@ -79,7 +79,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
       };
       reader.readAsArrayBuffer(file);
     } else {
-      alert('Unsupported file type.');
+      setDialogConfig({ type: 'alert', message: 'Unsupported file type.', onConfirm: () => {} });
     }
 
     // Reset input
@@ -87,7 +87,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
   };
 
   const handleExportCSV = () => {
-    if (expenses.length === 0) return alert('No data to export.');
+    if (expenses.length === 0) return setDialogConfig({ type: 'alert', message: 'No data to export.', onConfirm: () => {} });
     
     // Create CSV content
     const headers = ['Date', 'Item', 'Category', 'Quantity', 'Unit Price', 'Total'];
@@ -119,10 +119,13 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
   };
 
   const handleWipeData = () => {
-    const confirm = window.confirm("Are you absolutely sure? This will delete all your expenses permanently.");
-    if (confirm) {
-      onWipeData();
-    }
+    setDialogConfig({
+      type: 'confirm',
+      message: 'Are you absolutely sure? This will delete all your expenses permanently.',
+      onConfirm: () => {
+        onWipeData();
+      }
+    });
   };
 
   const themeOptions = [
@@ -384,7 +387,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
                 onClick={() => {
                   onImportData(pendingImport);
                   setPendingImport(null);
-                  alert(`Successfully imported ${pendingImport.length} expenses!`);
+                  setDialogConfig({ type: 'alert', message: `Successfully imported ${pendingImport.length} expenses!`, onConfirm: () => {} });
                 }}
               >
                 <Check size={20} /> Confirm Import ({pendingImport.length} items)

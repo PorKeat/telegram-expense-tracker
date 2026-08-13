@@ -11,6 +11,7 @@ import History from '../components/History';
 import Reports from '../components/Reports';
 import BottomNav from '../components/BottomNav';
 import Settings from '../components/Settings';
+import Dialog from '../components/Dialog';
 
 function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -23,6 +24,7 @@ function App() {
   const [storageKey, setStorageKey] = useState('spendly_expenses');
   const [spendLimit, setSpendLimit] = useState('');
   const [customCategories, setCustomCategories] = useState([]);
+  const [dialogConfig, setDialogConfig] = useState(null);
   
   const [telegramUserId, setTelegramUserId] = useState('private');
   const [telegramChatId, setTelegramChatId] = useState('direct');
@@ -148,13 +150,13 @@ function App() {
       if (newTotal > limit) {
         const message = `⚠️ Budget Warning! This expense brings your monthly total to ${currency}${(newTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2})}, exceeding your limit of ${currency}${(limit * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2})}.`;
         try {
-          if (window.Telegram?.WebApp?.initData) {
+          if (window.Telegram?.WebApp?.showAlert) {
             window.Telegram.WebApp.showAlert(message);
           } else {
-            alert(message);
+            setDialogConfig({ type: 'alert', message, onConfirm: () => {} });
           }
-        } catch (error) {
-          alert(message);
+        } catch(e) {
+          setDialogConfig({ type: 'alert', message, onConfirm: () => {} });
         }
       }
     }
@@ -179,7 +181,7 @@ function App() {
       setExpenses([data[0], ...expenses]);
     } else if (error) {
       console.error(error);
-      alert("Failed to save to cloud");
+      setDialogConfig({ type: 'alert', message: "Failed to save to cloud", onConfirm: () => {} });
     }
     
     setShowAddModal(false);
@@ -268,6 +270,7 @@ function App() {
                   expenses={expenses} 
                   onWipeData={handleWipeData} 
                   onImportData={handleImportData}
+                  setDialogConfig={setDialogConfig}
                />;
       default:
         return <Home expenses={expenses} currency={currency} exchangeRate={exchangeRate} spendLimit={spendLimit} allCategories={allCategories} />;
@@ -316,6 +319,8 @@ function App() {
           </button>
         </div>
       )}
+      
+      <Dialog config={dialogConfig} onClose={() => setDialogConfig(null)} />
     </>
   );
 }
