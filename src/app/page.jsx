@@ -299,7 +299,9 @@ function App() {
 
   return (
     <>
-      {renderContent()}
+      <div key={activeTab} className="page-transition">
+        {renderContent()}
+      </div>
       
       <BottomNav 
         activeTab={activeTab} 

@@ -124,13 +124,12 @@ export default function Reports({ expenses, currency, exchangeRate, allCategorie
               <div key={category} className="flex-col" style={{ alignItems: 'center', gap: '12px', height: '100%', justifyContent: 'flex-end', flex: 1 }}>
                 <span className="text-tiny" style={{ fontSize: '10px', color: 'var(--primary-color)' }}>{Math.round(percentage)}%</span>
                 <div style={{ width: '100%', maxWidth: '32px', height: '100%', background: 'rgba(255,255,255,0.05)', borderRadius: '16px', display: 'flex', alignItems: 'flex-end', padding: '4px', boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.1)' }}>
-                  <div style={{ 
+                  <div className="chart-bar-anim" style={{ 
                     width: '100%', 
                     height: `${percentage}%`, 
                     background: 'var(--primary-gradient)',
                     borderRadius: '12px',
-                    boxShadow: '0 0 15px var(--primary-glow)',
-                    transition: 'height 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)'
+                    boxShadow: '0 0 15px var(--primary-glow)'
                   }} />
                 </div>
                 <div style={{ fontSize: '20px' }}>{getIcon(category)}</div>
