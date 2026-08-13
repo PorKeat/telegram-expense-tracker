@@ -4,7 +4,7 @@ export default function Dialog({ config, onClose }) {
   const isConfirm = config.type === 'confirm';
 
   return (
-    <div className="modal-overlay" style={{ zIndex: 9999, justifyContent: 'flex-end', animation: 'none', backgroundColor: 'rgba(0,0,0,0.6)' }}>
+    <div className="modal-overlay" style={{ zIndex: 9999, justifyContent: 'flex-end', animation: 'none', backgroundColor: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}>
       <div 
         className="glass-card flex-col gap-md" 
         style={{ 
