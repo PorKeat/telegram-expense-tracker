@@ -207,23 +207,36 @@ function App() {
   };
 
   const handleImportData = async (newExpenses) => {
-    const imports = newExpenses.map(exp => {
-      const newExp = {
-        ...exp,
-        telegram_user_id: telegramUserId,
-        telegram_chat_id: telegramChatId
-      };
-      if (typeof newExp.id === 'number') delete newExp.id;
-      return newExp;
-    });
+    try {
+      const imports = newExpenses.map(exp => {
+        const newExp = {
+          ...exp,
+          telegram_user_id: telegramUserId,
+          telegram_chat_id: telegramChatId
+        };
+        if (typeof newExp.id === 'number') delete newExp.id;
+        return newExp;
+      });
 
-    const { data, error } = await supabase
-      .from('expenses')
-      .insert(imports)
-      .select();
+      const { data, error } = await supabase
+        .from('expenses')
+        .insert(imports)
+        .select();
 
-    if (data) {
-      setExpenses([...data, ...expenses]);
+      if (error) {
+        console.error('Supabase import error:', error);
+        setDialogConfig({ type: 'alert', message: `Import failed: ${error.message}`, onConfirm: () => {} });
+        return false;
+      }
+
+      if (data) {
+        setExpenses([...data, ...expenses]);
+        return true;
+      }
+    } catch (err) {
+      console.error('Import exception:', err);
+      setDialogConfig({ type: 'alert', message: `Import error: ${err.message}`, onConfirm: () => {} });
+      return false;
     }
   };
 

@@ -35,8 +35,8 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
       }
       
       const dateStr = rawDate;
-      const item = row['Item'] || row['item'] || row['Name'] || row['Purchases'] || row['purchases'] || 'Imported Expense';
-      const category = row['Category'] || row['category'] || 'Other';
+      const item = String(row['Item'] || row['item'] || row['Name'] || row['Purchases'] || row['purchases'] || 'Imported Expense');
+      const category = String(row['Category'] || row['category'] || 'Other');
       const quantity = parseInt(row['Quantity'] || row['Qty'] || row['quantity'] || '1', 10);
       
       const parseMoney = (val) => {
@@ -482,10 +482,12 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
               <button 
                 className="button" 
                 style={{ padding: '16px' }}
-                onClick={() => {
-                  onImportData(pendingImport);
-                  setPendingImport(null);
-                  setDialogConfig({ type: 'alert', message: `Successfully imported ${pendingImport.length} expenses!`, onConfirm: () => {} });
+                onClick={async () => {
+                  const success = await onImportData(pendingImport);
+                  if (success) {
+                    setPendingImport(null);
+                    setDialogConfig({ type: 'alert', message: `Successfully imported ${pendingImport.length} expenses!`, onConfirm: () => {} });
+                  }
                 }}
               >
                 <Check size={20} /> Confirm Import ({pendingImport.length} items)
