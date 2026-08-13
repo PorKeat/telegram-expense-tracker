@@ -132,47 +132,64 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
         const rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
         const json = [];
         let headers = null;
-        let currentSectionDate = null;
+        let currentSectionDate = new Date();
         
         for (const row of rawRows) {
-          const truthyCells = row.filter(c => c !== "");
+          const cleanRow = [...row];
+          while(cleanRow.length > 0 && cleanRow[cleanRow.length - 1] === "") cleanRow.pop();
+          if (cleanRow.length === 0) continue;
           
-          if (!headers) {
-            // Is this a date section header? (e.g. merged cell with one date)
-            if (truthyCells.length === 1 && (truthyCells[0] instanceof Date || String(truthyCells[0]).match(/\d/))) {
-               currentSectionDate = truthyCells[0];
-               continue;
-            }
-            
-            // Is this the actual header row?
-            if (truthyCells.some(c => typeof c === 'string' && (c.toLowerCase().includes('purchase') || c.toLowerCase().includes('item') || c.toLowerCase().includes('date') || c.toLowerCase().includes('expense') || c.toLowerCase().includes('category')))) {
-               headers = row.map(h => String(h).trim());
-               continue;
+          // Date section header (single cell)
+          if (cleanRow.length === 1) {
+            const cell = cleanRow[0];
+            if (cell instanceof Date) {
+               currentSectionDate = cell;
+            } else if (typeof cell === 'string' && cell.match(/\d/)) {
+               const d = new Date(cell);
+               if (!isNaN(d.getTime())) currentSectionDate = d;
             }
             continue;
           }
           
-          // Already have headers. Is this a new date section?
-          if (truthyCells.length === 1 && (truthyCells[0] instanceof Date || String(truthyCells[0]).match(/\d/)) && !headers.includes(truthyCells[0])) {
-             currentSectionDate = truthyCells[0];
+          // Detect headers if not found yet
+          if (!headers && cleanRow.some(c => typeof c === 'string' && (c.toLowerCase().includes('purchase') || c.toLowerCase().includes('item') || c.toLowerCase().includes('expense')))) {
+             headers = cleanRow.map(h => String(h).trim());
              continue;
           }
           
-          // Data row
-          if (truthyCells.length > 0) {
-             const obj = {};
+          // We have headers -> Map to object
+          if (headers && cleanRow.length >= 2) {
+             const obj = { 'Date': currentSectionDate };
              headers.forEach((h, i) => {
-               if (h) obj[h] = row[i];
+               if (h) obj[h] = cleanRow[i];
              });
-             // Inject section date if row doesn't specify one
-             if (currentSectionDate && !obj['Date'] && !obj['date'] && !obj['DATE']) {
-               obj['Date'] = currentSectionDate;
-             }
              json.push(obj);
+             continue;
+          }
+          
+          // Heuristic fallback: No headers found, but looks like [String, Number]
+          if (!headers && cleanRow.length >= 2) {
+             const col0 = cleanRow[0];
+             const col1 = cleanRow[1];
+             let isData = false;
+             let val = 0;
+             if (typeof col1 === 'number') { isData = true; val = col1; }
+             else if (typeof col1 === 'string' && col1.match(/^[\d,\.]+$/)) {
+               val = parseFloat(col1.replace(/,/g, ''));
+               if (!isNaN(val)) isData = true;
+             }
+             
+             if (isData && typeof col0 === 'string') {
+               json.push({
+                 'Item': col0,
+                 'Expense (riel)': val, // Assume Riel given the user's context
+                 'Date': currentSectionDate
+               });
+             }
           }
         }
         
-        // Fallback to standard parser if our heuristic found no data
+        // Fallback to standard parser if our heuristic found absolutely nothing
         processParsedData(json.length > 0 ? json : XLSX.utils.sheet_to_json(worksheet, { defval: "" }));
       };
       reader.readAsArrayBuffer(file);

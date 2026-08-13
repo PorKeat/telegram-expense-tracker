@@ -2344,41 +2344,63 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                 });
                 const json = [];
                 let headers = null;
-                let currentSectionDate = null;
+                let currentSectionDate = new Date();
                 for (const row of rawRows){
-                    const truthyCells = row.filter((c)=>c !== "");
-                    if (!headers) {
-                        // Is this a date section header? (e.g. merged cell with one date)
-                        if (truthyCells.length === 1 && (truthyCells[0] instanceof Date || String(truthyCells[0]).match(/\d/))) {
-                            currentSectionDate = truthyCells[0];
-                            continue;
-                        }
-                        // Is this the actual header row?
-                        if (truthyCells.some((c)=>typeof c === 'string' && (c.toLowerCase().includes('purchase') || c.toLowerCase().includes('item') || c.toLowerCase().includes('date') || c.toLowerCase().includes('expense') || c.toLowerCase().includes('category')))) {
-                            headers = row.map((h)=>String(h).trim());
-                            continue;
+                    const cleanRow = [
+                        ...row
+                    ];
+                    while(cleanRow.length > 0 && cleanRow[cleanRow.length - 1] === "")cleanRow.pop();
+                    if (cleanRow.length === 0) continue;
+                    // Date section header (single cell)
+                    if (cleanRow.length === 1) {
+                        const cell = cleanRow[0];
+                        if (cell instanceof Date) {
+                            currentSectionDate = cell;
+                        } else if (typeof cell === 'string' && cell.match(/\d/)) {
+                            const d = new Date(cell);
+                            if (!isNaN(d.getTime())) currentSectionDate = d;
                         }
                         continue;
                     }
-                    // Already have headers. Is this a new date section?
-                    if (truthyCells.length === 1 && (truthyCells[0] instanceof Date || String(truthyCells[0]).match(/\d/)) && !headers.includes(truthyCells[0])) {
-                        currentSectionDate = truthyCells[0];
+                    // Detect headers if not found yet
+                    if (!headers && cleanRow.some((c)=>typeof c === 'string' && (c.toLowerCase().includes('purchase') || c.toLowerCase().includes('item') || c.toLowerCase().includes('expense')))) {
+                        headers = cleanRow.map((h)=>String(h).trim());
                         continue;
                     }
-                    // Data row
-                    if (truthyCells.length > 0) {
-                        const obj = {};
+                    // We have headers -> Map to object
+                    if (headers && cleanRow.length >= 2) {
+                        const obj = {
+                            'Date': currentSectionDate
+                        };
                         headers.forEach((h, i)=>{
-                            if (h) obj[h] = row[i];
+                            if (h) obj[h] = cleanRow[i];
                         });
-                        // Inject section date if row doesn't specify one
-                        if (currentSectionDate && !obj['Date'] && !obj['date'] && !obj['DATE']) {
-                            obj['Date'] = currentSectionDate;
-                        }
                         json.push(obj);
+                        continue;
+                    }
+                    // Heuristic fallback: No headers found, but looks like [String, Number]
+                    if (!headers && cleanRow.length >= 2) {
+                        const col0 = cleanRow[0];
+                        const col1 = cleanRow[1];
+                        let isData = false;
+                        let val = 0;
+                        if (typeof col1 === 'number') {
+                            isData = true;
+                            val = col1;
+                        } else if (typeof col1 === 'string' && col1.match(/^[\d,\.]+$/)) {
+                            val = parseFloat(col1.replace(/,/g, ''));
+                            if (!isNaN(val)) isData = true;
+                        }
+                        if (isData && typeof col0 === 'string') {
+                            json.push({
+                                'Item': col0,
+                                'Expense (riel)': val,
+                                'Date': currentSectionDate
+                            });
+                        }
                     }
                 }
-                // Fallback to standard parser if our heuristic found no data
+                // Fallback to standard parser if our heuristic found absolutely nothing
                 processParsedData(json.length > 0 ? json : __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$xlsx$40$https$2b2b2b$cdn$2e$sheetjs$2e$com$2b$xlsx$2d$0$2e$20$2e$3$2b$xlsx$2d$0$2e$20$2e$3$2e$tgz$2f$node_modules$2f$xlsx$2f$xlsx$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["utils"].sheet_to_json(worksheet, {
                     defval: ""
                 }));
@@ -2493,12 +2515,12 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                     children: "Settings"
                 }, void 0, false, {
                     fileName: "[project]/src/components/Settings.jsx",
-                    lineNumber: 245,
+                    lineNumber: 262,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/Settings.jsx",
-                lineNumber: 244,
+                lineNumber: 261,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -2508,7 +2530,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                 children: "Appearance"
             }, void 0, false, {
                 fileName: "[project]/src/components/Settings.jsx",
-                lineNumber: 248,
+                lineNumber: 265,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2529,7 +2551,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                     children: "Theme"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Settings.jsx",
-                                    lineNumber: 254,
+                                    lineNumber: 271,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2537,13 +2559,13 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                     children: "Choose visual style"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Settings.jsx",
-                                    lineNumber: 255,
+                                    lineNumber: 272,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/Settings.jsx",
-                            lineNumber: 253,
+                            lineNumber: 270,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2572,7 +2594,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                             size: 16
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Settings.jsx",
-                                            lineNumber: 275,
+                                            lineNumber: 292,
                                             columnNumber: 17
                                         }, this),
                                         " ",
@@ -2580,23 +2602,23 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                     ]
                                 }, t.id, true, {
                                     fileName: "[project]/src/components/Settings.jsx",
-                                    lineNumber: 259,
+                                    lineNumber: 276,
                                     columnNumber: 15
                                 }, this))
                         }, void 0, false, {
                             fileName: "[project]/src/components/Settings.jsx",
-                            lineNumber: 257,
+                            lineNumber: 274,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/components/Settings.jsx",
-                    lineNumber: 252,
+                    lineNumber: 269,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/components/Settings.jsx",
-                lineNumber: 249,
+                lineNumber: 266,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -2606,7 +2628,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                 children: "Preferences"
             }, void 0, false, {
                 fileName: "[project]/src/components/Settings.jsx",
-                lineNumber: 282,
+                lineNumber: 299,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2628,7 +2650,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                         children: "Currency"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Settings.jsx",
-                                        lineNumber: 286,
+                                        lineNumber: 303,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2636,13 +2658,13 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                         children: "Choose your primary currency"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Settings.jsx",
-                                        lineNumber: 287,
+                                        lineNumber: 304,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 285,
+                                lineNumber: 302,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2672,14 +2694,14 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                                 size: 16
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/Settings.jsx",
-                                                lineNumber: 305,
+                                                lineNumber: 322,
                                                 columnNumber: 15
                                             }, this),
                                             " USD"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/Settings.jsx",
-                                        lineNumber: 290,
+                                        lineNumber: 307,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2701,26 +2723,26 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                                 size: 16
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/Settings.jsx",
-                                                lineNumber: 322,
+                                                lineNumber: 339,
                                                 columnNumber: 15
                                             }, this),
                                             " Riels"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/Settings.jsx",
-                                        lineNumber: 307,
+                                        lineNumber: 324,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 289,
+                                lineNumber: 306,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/Settings.jsx",
-                        lineNumber: 284,
+                        lineNumber: 301,
                         columnNumber: 9
                     }, this),
                     currency === '៛' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2741,7 +2763,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                         children: "Exchange Rate"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Settings.jsx",
-                                        lineNumber: 330,
+                                        lineNumber: 347,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2749,13 +2771,13 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                         children: "1 USD = ? Riels"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Settings.jsx",
-                                        lineNumber: 331,
+                                        lineNumber: 348,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 329,
+                                lineNumber: 346,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2772,18 +2794,18 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                     }
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Settings.jsx",
-                                    lineNumber: 334,
+                                    lineNumber: 351,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 333,
+                                lineNumber: 350,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/Settings.jsx",
-                        lineNumber: 328,
+                        lineNumber: 345,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2808,7 +2830,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/Settings.jsx",
-                                        lineNumber: 346,
+                                        lineNumber: 363,
                                         columnNumber: 13
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2816,13 +2838,13 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                         children: "Get alerted if you overspend"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Settings.jsx",
-                                        lineNumber: 347,
+                                        lineNumber: 364,
                                         columnNumber: 13
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 345,
+                                lineNumber: 362,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2847,24 +2869,24 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                     }
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Settings.jsx",
-                                    lineNumber: 350,
+                                    lineNumber: 367,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 349,
+                                lineNumber: 366,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/Settings.jsx",
-                        lineNumber: 344,
+                        lineNumber: 361,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/Settings.jsx",
-                lineNumber: 283,
+                lineNumber: 300,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -2874,7 +2896,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                 children: "Custom Categories"
             }, void 0, false, {
                 fileName: "[project]/src/components/Settings.jsx",
-                lineNumber: 368,
+                lineNumber: 385,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2891,7 +2913,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                         children: "No custom categories yet."
                     }, void 0, false, {
                         fileName: "[project]/src/components/Settings.jsx",
-                        lineNumber: 371,
+                        lineNumber: 388,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "flex-col gap-sm",
@@ -2913,7 +2935,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                                 children: cat.icon
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/Settings.jsx",
-                                                lineNumber: 377,
+                                                lineNumber: 394,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -2923,13 +2945,13 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                                 children: cat.name
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/Settings.jsx",
-                                                lineNumber: 378,
+                                                lineNumber: 395,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/Settings.jsx",
-                                        lineNumber: 376,
+                                        lineNumber: 393,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -2944,23 +2966,23 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                             size: 18
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Settings.jsx",
-                                            lineNumber: 381,
+                                            lineNumber: 398,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Settings.jsx",
-                                        lineNumber: 380,
+                                        lineNumber: 397,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, cat.name, true, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 375,
+                                lineNumber: 392,
                                 columnNumber: 15
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/src/components/Settings.jsx",
-                        lineNumber: 373,
+                        lineNumber: 390,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2984,7 +3006,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                 maxLength: "2"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 389,
+                                lineNumber: 406,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -2998,7 +3020,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                 }
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 396,
+                                lineNumber: 413,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3020,24 +3042,24 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                     size: 20
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Settings.jsx",
-                                    lineNumber: 407,
+                                    lineNumber: 424,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 403,
+                                lineNumber: 420,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/Settings.jsx",
-                        lineNumber: 388,
+                        lineNumber: 405,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/Settings.jsx",
-                lineNumber: 369,
+                lineNumber: 386,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -3047,7 +3069,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                 children: "Data Management"
             }, void 0, false, {
                 fileName: "[project]/src/components/Settings.jsx",
-                lineNumber: 412,
+                lineNumber: 429,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3063,7 +3085,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                         }
                     }, void 0, false, {
                         fileName: "[project]/src/components/Settings.jsx",
-                        lineNumber: 416,
+                        lineNumber: 433,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3090,19 +3112,19 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                             size: 20
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Settings.jsx",
-                                            lineNumber: 431,
+                                            lineNumber: 448,
                                             columnNumber: 15
                                         }, this),
                                         " Import Data"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/Settings.jsx",
-                                    lineNumber: 430,
+                                    lineNumber: 447,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 425,
+                                lineNumber: 442,
                                 columnNumber: 11
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3126,25 +3148,25 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                             size: 20
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/Settings.jsx",
-                                            lineNumber: 441,
+                                            lineNumber: 458,
                                             columnNumber: 15
                                         }, this),
                                         " Export CSV"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/Settings.jsx",
-                                    lineNumber: 440,
+                                    lineNumber: 457,
                                     columnNumber: 13
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 435,
+                                lineNumber: 452,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/Settings.jsx",
-                        lineNumber: 424,
+                        lineNumber: 441,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3169,25 +3191,25 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                     size: 20
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Settings.jsx",
-                                    lineNumber: 452,
+                                    lineNumber: 469,
                                     columnNumber: 13
                                 }, this),
                                 " Wipe All Data"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/Settings.jsx",
-                            lineNumber: 451,
+                            lineNumber: 468,
                             columnNumber: 11
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/src/components/Settings.jsx",
-                        lineNumber: 446,
+                        lineNumber: 463,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/Settings.jsx",
-                lineNumber: 413,
+                lineNumber: 430,
                 columnNumber: 7
             }, this),
             pendingImport && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3207,7 +3229,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                 children: "Import Preview"
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 460,
+                                lineNumber: 477,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3222,18 +3244,18 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                     size: 28
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Settings.jsx",
-                                    lineNumber: 462,
+                                    lineNumber: 479,
                                     columnNumber: 15
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 461,
+                                lineNumber: 478,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/Settings.jsx",
-                        lineNumber: 459,
+                        lineNumber: 476,
                         columnNumber: 11
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3263,7 +3285,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/Settings.jsx",
-                                        lineNumber: 468,
+                                        lineNumber: 485,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3288,7 +3310,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                                 children: "$"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/Settings.jsx",
-                                                lineNumber: 473,
+                                                lineNumber: 490,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3305,19 +3327,19 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                                 children: "៛"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/Settings.jsx",
-                                                lineNumber: 487,
+                                                lineNumber: 504,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/Settings.jsx",
-                                        lineNumber: 472,
+                                        lineNumber: 489,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 467,
+                                lineNumber: 484,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3347,7 +3369,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                                             children: exp.item
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/Settings.jsx",
-                                                            lineNumber: 510,
+                                                            lineNumber: 527,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3359,13 +3381,13 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/Settings.jsx",
-                                                            lineNumber: 511,
+                                                            lineNumber: 528,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/Settings.jsx",
-                                                    lineNumber: 509,
+                                                    lineNumber: 526,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -3384,13 +3406,13 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/Settings.jsx",
-                                                    lineNumber: 513,
+                                                    lineNumber: 530,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, idx, true, {
                                             fileName: "[project]/src/components/Settings.jsx",
-                                            lineNumber: 508,
+                                            lineNumber: 525,
                                             columnNumber: 19
                                         }, this);
                                     }),
@@ -3406,13 +3428,13 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/Settings.jsx",
-                                        lineNumber: 518,
+                                        lineNumber: 535,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 504,
+                                lineNumber: 521,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3439,7 +3461,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                                 size: 20
                                             }, void 0, false, {
                                                 fileName: "[project]/src/components/Settings.jsx",
-                                                lineNumber: 536,
+                                                lineNumber: 553,
                                                 columnNumber: 17
                                             }, this),
                                             " Confirm Import (",
@@ -3448,7 +3470,7 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/Settings.jsx",
-                                        lineNumber: 525,
+                                        lineNumber: 542,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -3460,31 +3482,31 @@ function Settings({ currency, setCurrency, customExchangeRate, setCustomExchange
                                         children: "Cancel"
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Settings.jsx",
-                                        lineNumber: 538,
+                                        lineNumber: 555,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/Settings.jsx",
-                                lineNumber: 524,
+                                lineNumber: 541,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/Settings.jsx",
-                        lineNumber: 466,
+                        lineNumber: 483,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/Settings.jsx",
-                lineNumber: 458,
+                lineNumber: 475,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/components/Settings.jsx",
-        lineNumber: 243,
+        lineNumber: 260,
         columnNumber: 5
     }, this);
 }
