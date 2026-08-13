@@ -22,13 +22,67 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
   const fileInputRef = useRef(null);
 
   const processParsedData = (data) => {
+    let lastSeenDate = new Date().toISOString();
+    
     const parsedExpenses = data.map(row => {
-      const dateStr = row['Date'] || row['date'] || new Date().toISOString();
-      const item = row['Item'] || row['item'] || row['Name'] || 'Imported Expense';
+      // Handle merged cells in Excel by carrying forward the last non-empty date
+      let rawDate = row['Date'] || row['date'] || row['DATE'];
+      if (!rawDate || rawDate.toString().trim() === '') {
+        rawDate = lastSeenDate;
+      } else {
+        lastSeenDate = rawDate;
+      }
+      
+      const dateStr = rawDate;
+      const item = row['Item'] || row['item'] || row['Name'] || row['Purchases'] || row['purchases'] || 'Imported Expense';
       const category = row['Category'] || row['category'] || 'Other';
       const quantity = parseInt(row['Quantity'] || row['Qty'] || row['quantity'] || '1', 10);
-      const price = parseFloat(row['Unit Price'] || row['Price'] || row['price'] || row['Total'] || '0');
-      const total = parseFloat(row['Total'] || row['total'] || (price * quantity).toString() || '0');
+      
+      const parseMoney = (val) => {
+        if (!val) return 0;
+        return parseFloat(val.toString().replace(/,/g, ''));
+      };
+      
+      let price = parseMoney(row['Unit Price'] || row['Price'] || row['price'] || '0');
+      let total = parseMoney(row['Total'] || row['total'] || row['Expense'] || row['expense']);
+      
+      // Explicit support for "Expense (riel)"
+      const rielTotal = parseMoney(row['Expense (riel)']);
+      
+      // If we got a specific Riel column, convert it to our base unit using the custom exchange rate
+      if (rielTotal) {
+         // App stores values in base (USD). customExchangeRate represents Riels per USD (e.g., 4000)
+         const rateToUse = customExchangeRate || 4000;
+         total = rielTotal / rateToUse;
+         if (!price) price = total / (isNaN(quantity) || quantity === 0 ? 1 : quantity);
+      } else if (!total && !price) {
+         total = 0;
+      } else if (!total && price) {
+         total = price * (isNaN(quantity) ? 1 : quantity);
+      } else if (total && !price) {
+         price = total / (isNaN(quantity) || quantity === 0 ? 1 : quantity);
+      }
+
+      // If the CSV was exported directly from our app, or has generic total, we must convert it 
+      // from the current display currency back to the base storage currency.
+      // E.g., if currency === '៛', the generic 'Total' column is assumed to be in Riels.
+      if (!rielTotal && currency === '៛') {
+         total = total / customExchangeRate;
+         price = price / customExchangeRate;
+      }
+
+      // Final Date formatting
+      // Many CSVs/Excels use M/D/YYYY or D/M/YYYY. JS `new Date()` handles MM/DD/YYYY well natively.
+      let parsedDate = new Date(dateStr);
+      // Fallback for weird formats
+      if (isNaN(parsedDate.getTime())) {
+         const parts = dateStr.toString().split('/');
+         if (parts.length === 3) {
+           // Assume D/M/YYYY as per screenshot
+           parsedDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}T12:00:00Z`);
+         }
+      }
+      if (isNaN(parsedDate.getTime())) parsedDate = new Date();
 
       return {
         item,
@@ -36,7 +90,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
         quantity: isNaN(quantity) ? 1 : quantity,
         price: isNaN(price) ? 0 : price,
         total: isNaN(total) ? 0 : total,
-        date: new Date(dateStr).toISOString()
+        date: parsedDate.toISOString()
       };
     });
 
