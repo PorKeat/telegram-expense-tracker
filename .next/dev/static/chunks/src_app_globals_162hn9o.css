@@ -255,7 +255,7 @@ input::placeholder {
 }
 
 .floating-nav-container {
-  bottom: env(safe-area-inset-bottom, 24px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
   left: var(--spacing-md);
   right: var(--spacing-md);
   z-index: 100;
@@ -304,7 +304,7 @@ input::placeholder {
 }
 
 .fab-container {
-  bottom: env(safe-area-inset-bottom, 96px);
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
   z-index: 90;
   position: absolute;
   right: 24px;
