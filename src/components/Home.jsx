@@ -47,19 +47,19 @@ export default function Home({ expenses, currency, exchangeRate, spendLimit, all
       <div className="glass-card" style={{ marginBottom: 'var(--spacing-lg)' }}>
         <p className="text-secondary" style={{ textTransform: 'uppercase', letterSpacing: '1px', fontSize: '12px', fontWeight: 600 }}>Total Balance</p>
         <h1 style={{ fontSize: '48px', margin: '8px 0', color: 'var(--text-primary)', fontWeight: 300, letterSpacing: '-2px' }}>
-          {currency}{(todayTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+          {currency}{(todayTotal * exchangeRate).toLocaleString(undefined, (currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0}))}
         </h1>
         
         <div className="flex-row gap-md" style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--surface-border)' }}>
           <div className="flex-col" style={{ flex: 1 }}>
             <p className="text-tiny">This Week</p>
-            <h3 style={{ marginTop: '6px', fontSize: '20px', fontWeight: 400, color: 'var(--text-primary)' }}>{currency}{(weekTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
+            <h3 style={{ marginTop: '6px', fontSize: '20px', fontWeight: 400, color: 'var(--text-primary)' }}>{currency}{(weekTotal * exchangeRate).toLocaleString(undefined, (currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0}))}</h3>
           </div>
           <div style={{ width: '1px', height: '40px', backgroundColor: 'var(--surface-border)' }}></div>
           <div className="flex-col" style={{ flex: 1 }}>
             <p className="text-tiny">This Month</p>
             <h3 style={{ marginTop: '4px', color: isOverLimit ? 'var(--danger-color)' : 'inherit' }}>
-              {currency}{(monthTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+              {currency}{(monthTotal * exchangeRate).toLocaleString(undefined, (currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0}))}
             </h3>
           </div>
         </div>
@@ -69,7 +69,7 @@ export default function Home({ expenses, currency, exchangeRate, spendLimit, all
             <div className="flex-row space-between" style={{ marginBottom: '12px' }}>
               <span className="text-tiny">Monthly Budget</span>
               <span className="text-tiny" style={{ color: isOverLimit ? 'var(--danger-color)' : 'inherit', fontWeight: isOverLimit ? 700 : 500 }}>
-                {progressPercent.toFixed(0)}% of {currency}{(limit * exchangeRate).toLocaleString()}
+                {progressPercent.toFixed(0)}% of {currency}{(limit * exchangeRate).toLocaleString(undefined, currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0})}
               </span>
             </div>
             <div style={{ height: '6px', backgroundColor: 'var(--surface-elevated)', borderRadius: '3px', overflow: 'hidden' }}>
@@ -86,7 +86,7 @@ export default function Home({ expenses, currency, exchangeRate, spendLimit, all
             {isOverLimit && (
               <div className="flex-row" style={{ marginTop: '12px', gap: '8px', color: 'var(--bg-color)', backgroundColor: 'var(--danger-color)', padding: '12px', borderRadius: 'var(--radius-sm)' }}>
                 <AlertTriangle size={16} />
-                <span style={{ fontSize: '12px', fontWeight: 600 }}>Limit Exceeded by {currency}{((monthTotal - limit) * exchangeRate).toLocaleString()}!</span>
+                <span style={{ fontSize: '12px', fontWeight: 600 }}>Limit Exceeded by {currency}{((monthTotal - limit) * exchangeRate).toLocaleString(undefined, currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0})}!</span>
               </div>
             )}
           </div>
@@ -110,7 +110,7 @@ export default function Home({ expenses, currency, exchangeRate, spendLimit, all
                 </div>
               </div>
               <div className="flex-col" style={{ alignItems: 'flex-end' }}>
-                <h3 style={{ fontSize: '16px' }}>-{currency}{(expense.total * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
+                <h3 style={{ fontSize: '16px' }}>-{currency}{(expense.total * exchangeRate).toLocaleString(undefined, (currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0}))}</h3>
                 <p className="text-small">{format(parseISO(expense.date), 'MMM d')}</p>
               </div>
             </div>

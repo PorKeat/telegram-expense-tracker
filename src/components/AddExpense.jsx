@@ -50,7 +50,7 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
           {/* Main Total Display */}
           <div className="flex-col" style={{ alignItems: 'center', marginBottom: '8px' }}>
             <p className="text-secondary" style={{ textTransform: 'uppercase', letterSpacing: '1px', fontSize: '12px', fontWeight: 600 }}>Total Amount</p>
-            <h1 style={{ fontSize: '56px', color: 'var(--primary-color)', fontWeight: 300, letterSpacing: '-2px' }}>{currency}{total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h1>
+            <h1 style={{ fontSize: '56px', color: 'var(--primary-color)', fontWeight: 300, letterSpacing: '-2px' }}>{currency}{total.toLocaleString(undefined, currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0})}</h1>
             {quantity > 1 && (
               <p className="text-small">{quantity} × {currency}{price || '0.00'}</p>
             )}

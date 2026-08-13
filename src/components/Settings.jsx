@@ -7,6 +7,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
   const [newCatName, setNewCatName] = useState('');
   const [newCatEmoji, setNewCatEmoji] = useState('🎮');
   const [pendingImport, setPendingImport] = useState(null);
+  const [previewCurrency, setPreviewCurrency] = useState(currency);
 
   const handleAddCategory = () => {
     if (newCatName.trim()) {
@@ -413,20 +414,56 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
           </div>
           
           <div className="app-content" style={{ paddingBottom: '24px', flex: 1, overflowY: 'auto' }}>
-            <p className="text-secondary" style={{ marginBottom: '16px' }}>
-              Found {pendingImport.length} expenses to import. Please review them below:
-            </p>
+            <div className="flex-row space-between" style={{ marginBottom: '16px', alignItems: 'center' }}>
+              <p className="text-secondary" style={{ marginBottom: 0 }}>
+                Found {pendingImport.length} expenses.
+              </p>
+              
+              <div className="flex-row gap-xs" style={{ backgroundColor: 'var(--surface-color-elevated)', padding: '4px', borderRadius: 'var(--radius-sm)' }}>
+                <button 
+                  onClick={() => setPreviewCurrency('$')}
+                  style={{
+                    padding: '4px 12px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: 'none',
+                    backgroundColor: previewCurrency === '$' ? 'var(--primary-color)' : 'transparent',
+                    color: previewCurrency === '$' ? 'var(--bg-color)' : 'var(--text-secondary)',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  $
+                </button>
+                <button 
+                  onClick={() => setPreviewCurrency('៛')}
+                  style={{
+                    padding: '4px 12px',
+                    borderRadius: 'var(--radius-sm)',
+                    border: 'none',
+                    backgroundColor: previewCurrency === '៛' ? 'var(--primary-color)' : 'transparent',
+                    color: previewCurrency === '៛' ? 'var(--bg-color)' : 'var(--text-secondary)',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  ៛
+                </button>
+              </div>
+            </div>
             
             <div className="glass-card flex-col gap-sm" style={{ marginBottom: '24px', maxHeight: '50vh', overflowY: 'auto' }}>
-              {pendingImport.slice(0, 50).map((exp, idx) => (
-                <div key={idx} className="flex-row space-between" style={{ padding: '8px', borderBottom: '1px solid var(--border-color)' }}>
-                  <div className="flex-col">
-                    <span style={{ fontWeight: 500 }}>{exp.item}</span>
-                    <span className="text-small">{exp.category} • {exp.date.split('T')[0]}</span>
+              {pendingImport.slice(0, 50).map((exp, idx) => {
+                const previewRate = previewCurrency === '៛' ? customExchangeRate : 1;
+                return (
+                  <div key={idx} className="flex-row space-between" style={{ padding: '8px', borderBottom: '1px solid var(--border-color)' }}>
+                    <div className="flex-col">
+                      <span style={{ fontWeight: 500 }}>{exp.item}</span>
+                      <span className="text-small">{exp.category} • {exp.date.split('T')[0]}</span>
+                    </div>
+                    <span style={{ fontWeight: 600 }}>{previewCurrency}{(exp.total * previewRate).toLocaleString(undefined, previewCurrency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0})}</span>
                   </div>
-                  <span style={{ fontWeight: 600 }}>{currency}{exp.total.toLocaleString(undefined, {minimumFractionDigits: 2})}</span>
-                </div>
-              ))}
+                );
+              })}
               {pendingImport.length > 50 && (
                 <p className="text-secondary text-center" style={{ paddingTop: '8px' }}>
                   ...and {pendingImport.length - 50} more items

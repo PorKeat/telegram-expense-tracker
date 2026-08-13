@@ -50,7 +50,7 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
             <div key={date} style={{ marginBottom: '32px' }}>
               <div className="flex-row space-between" style={{ marginBottom: '12px' }}>
                 <h3 style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{date}</h3>
-                <h3 style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{currency}{(dailyTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
+                <h3 style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{currency}{(dailyTotal * exchangeRate).toLocaleString(undefined, (currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0}))}</h3>
               </div>
               
               <div className="glass-card" style={{ padding: '0 var(--spacing-lg)' }}>
@@ -63,13 +63,13 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
                       <div className="flex-col">
                         <h3 style={{ fontSize: '16px' }}>{expense.item}</h3>
                         <p className="text-small">
-                          {expense.quantity > 1 ? `${expense.quantity} × ${currency}{(expense.price * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})} — ` : ''} 
+                          {expense.quantity > 1 ? `${expense.quantity} × ${currency}{(expense.price * exchangeRate).toLocaleString(undefined, (currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0}))} — ` : ''} 
                           {expense.category}
                         </p>
                       </div>
                     </div>
                     <div className="flex-col gap-sm" style={{ alignItems: 'flex-end' }}>
-                      <h3 style={{ fontSize: '16px' }}>-{currency}{(expense.total * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
+                      <h3 style={{ fontSize: '16px' }}>-{currency}{(expense.total * exchangeRate).toLocaleString(undefined, (currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0}))}</h3>
                       <div className="flex-row gap-sm">
                         <button onClick={() => onEdit(expense)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>
                           <Edit2 size={16} />

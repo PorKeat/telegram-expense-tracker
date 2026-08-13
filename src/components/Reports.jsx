@@ -49,7 +49,7 @@ export default function Reports({ expenses, currency, exchangeRate }) {
       <div className="glass-card flex-col" style={{ marginBottom: '24px', alignItems: 'center', textAlign: 'center' }}>
         <p className="text-secondary">Total Spending ({timeframe})</p>
         <h1 style={{ fontSize: '40px', margin: '8px 0', color: 'var(--text-primary)' }}>
-          {currency}{(totalSpending * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+          {currency}{(totalSpending * exchangeRate).toLocaleString(undefined, (currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0}))}
         </h1>
         {highestCategory && (
           <p className="text-small" style={{ marginTop: '8px' }}>
@@ -69,7 +69,7 @@ export default function Reports({ expenses, currency, exchangeRate }) {
               <div key={category} className="flex-col gap-xs">
                 <div className="flex-row space-between">
                   <span style={{ fontSize: '14px', fontWeight: 500 }}>{category}</span>
-                  <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{currency}{(amount * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                  <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{currency}{(amount * exchangeRate).toLocaleString(undefined, (currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0}))}</span>
                 </div>
                 <div style={{ width: '100%', height: '8px', backgroundColor: 'var(--surface-color-elevated)', borderRadius: '4px', overflow: 'hidden' }}>
                   <div style={{ 
