@@ -1,7 +1,7 @@
 import { format, isToday, isThisWeek, isThisMonth, parseISO } from 'date-fns';
 import { Coffee, ShoppingBag, Car, Home as HomeIcon, Zap, MoreHorizontal, AlertTriangle } from 'lucide-react';
 
-export default function Home({ expenses, currency, exchangeRate, spendLimit }) {
+export default function Home({ expenses, currency, exchangeRate, spendLimit, allCategories = [] }) {
   // Calculations
   const todayTotal = expenses
     .filter(e => isToday(parseISO(e.date)))
@@ -22,6 +22,11 @@ export default function Home({ expenses, currency, exchangeRate, spendLimit }) {
   const recentExpenses = expenses.slice(0, 5);
 
   const getIcon = (category) => {
+    const customCat = allCategories.find(c => c.name === category && c.isCustom);
+    if (customCat) {
+      return <span style={{ fontSize: '24px' }}>{customCat.icon}</span>;
+    }
+
     switch(category) {
       case 'Food & Drink': return <Coffee size={24} />;
       case 'Shopping': return <ShoppingBag size={24} />;

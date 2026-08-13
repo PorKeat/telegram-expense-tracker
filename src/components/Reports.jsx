@@ -34,7 +34,7 @@ export default function Reports({ expenses, currency, exchangeRate }) {
               borderRadius: '20px', 
               border: 'none',
               backgroundColor: timeframe === t ? 'var(--primary-color)' : 'var(--surface-color-elevated)',
-              color: timeframe === t ? 'white' : 'var(--text-secondary)',
+              color: timeframe === t ? 'var(--bg-color)' : 'var(--text-secondary)',
               textTransform: 'capitalize',
               fontWeight: 500,
               cursor: 'pointer'

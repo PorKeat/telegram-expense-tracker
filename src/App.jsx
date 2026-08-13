@@ -20,6 +20,18 @@ function App() {
   const [customExchangeRate, setCustomExchangeRate] = useState(4000);
   const [storageKey, setStorageKey] = useState('spendly_expenses');
   const [spendLimit, setSpendLimit] = useState('');
+  const [customCategories, setCustomCategories] = useState([]);
+
+  const defaultCategories = [
+    { name: 'Food & Drink', iconType: 'lucide' },
+    { name: 'Shopping', iconType: 'lucide' },
+    { name: 'Transport', iconType: 'lucide' },
+    { name: 'Housing', iconType: 'lucide' },
+    { name: 'Utilities', iconType: 'lucide' },
+    { name: 'Other', iconType: 'lucide' }
+  ];
+
+  const allCategories = [...defaultCategories, ...customCategories];
 
   // Load from localStorage on mount and initialize Telegram
   useEffect(() => {
@@ -81,6 +93,13 @@ function App() {
     const savedLimit = localStorage.getItem(`${dynamicKey}_limit`);
     if (savedLimit) setSpendLimit(savedLimit);
 
+    const savedCats = localStorage.getItem(`${dynamicKey}_categories`);
+    if (savedCats) {
+      try {
+        setCustomCategories(JSON.parse(savedCats));
+      } catch(e) {}
+    }
+
     // Cleanup legacy inline styles from previous versions
     document.documentElement.style.removeProperty('--primary-color');
     document.documentElement.style.removeProperty('--primary-glow');
@@ -115,6 +134,10 @@ function App() {
       localStorage.removeItem(`${storageKey}_limit`);
     }
   }, [spendLimit, storageKey]);
+
+  useEffect(() => {
+    localStorage.setItem(`${storageKey}_categories`, JSON.stringify(customCategories));
+  }, [customCategories, storageKey]);
 
   const exchangeRate = currency === '៛' ? customExchangeRate : 1;
 
@@ -155,17 +178,29 @@ function App() {
     setExpenses(expenses.filter(e => e.id !== id));
   };
 
+  const handleImportData = (newExpenses) => {
+    // Merge without duplicating IDs
+    const currentMaxId = expenses.length > 0 ? Math.max(...expenses.map(e => e.id)) : Date.now();
+    const imported = newExpenses.map((exp, index) => ({
+      ...exp,
+      id: currentMaxId + index + 1
+    }));
+    setExpenses([...imported, ...expenses]);
+  };
+
   const handleWipeData = () => {
     setExpenses([]);
     setSpendLimit('');
+    setCustomCategories([]);
     localStorage.removeItem(storageKey);
     localStorage.removeItem(`${storageKey}_limit`);
+    localStorage.removeItem(`${storageKey}_categories`);
   };
 
   const renderContent = () => {
     switch (activeTab) {
       case 'home':
-        return <Home expenses={expenses} currency={currency} exchangeRate={exchangeRate} />;
+        return <Home expenses={expenses} currency={currency} exchangeRate={exchangeRate} spendLimit={spendLimit} allCategories={allCategories} />;
       case 'history':
         return <History 
                   expenses={expenses} 
@@ -173,9 +208,10 @@ function App() {
                   exchangeRate={exchangeRate}
                   onEdit={(expense) => setEditingExpense(expense)}
                   onDelete={handleDeleteExpense} 
+                  allCategories={allCategories}
                />;
       case 'reports':
-        return <Reports expenses={expenses} currency={currency} exchangeRate={exchangeRate} />;
+        return <Reports expenses={expenses} currency={currency} exchangeRate={exchangeRate} allCategories={allCategories} />;
       case 'settings':
         return <Settings 
                   currency={currency} 
@@ -184,13 +220,16 @@ function App() {
                   setCustomExchangeRate={setCustomExchangeRate}
                   spendLimit={spendLimit}
                   setSpendLimit={setSpendLimit}
+                  customCategories={customCategories}
+                  setCustomCategories={setCustomCategories}
                   theme={theme}
                   setTheme={setTheme}
                   expenses={expenses} 
                   onWipeData={handleWipeData} 
+                  onImportData={handleImportData}
                />;
       default:
-        return <Home expenses={expenses} currency={currency} exchangeRate={exchangeRate} />;
+        return <Home expenses={expenses} currency={currency} exchangeRate={exchangeRate} spendLimit={spendLimit} allCategories={allCategories} />;
     }
   };
 
@@ -206,6 +245,7 @@ function App() {
           onSave={handleAddExpense}
           currency={currency}
           exchangeRate={exchangeRate}
+          allCategories={allCategories}
         />
       )}
 
@@ -216,6 +256,7 @@ function App() {
           onSave={handleUpdateExpense}
           currency={currency}
           exchangeRate={exchangeRate}
+          allCategories={allCategories}
         />
       )}
       

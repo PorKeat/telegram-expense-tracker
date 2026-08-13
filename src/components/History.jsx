@@ -1,7 +1,7 @@
 import { format, parseISO } from 'date-fns';
 import { Coffee, ShoppingBag, Car, Home, Zap, MoreHorizontal, Trash2, Edit2 } from 'lucide-react';
 
-export default function History({ expenses, currency, exchangeRate, onEdit, onDelete }) {
+export default function History({ expenses, currency, exchangeRate, onEdit, onDelete, allCategories = [] }) {
   
   // Sort expenses by date descending
   const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -17,6 +17,11 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
   }, {});
 
   const getIcon = (category) => {
+    const customCat = allCategories.find(c => c.name === category && c.isCustom);
+    if (customCat) {
+      return <span style={{ fontSize: '24px' }}>{customCat.icon}</span>;
+    }
+
     switch(category) {
       case 'Food & Drink': return <Coffee size={24} />;
       case 'Shopping': return <ShoppingBag size={24} />;

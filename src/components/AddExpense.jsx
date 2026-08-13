@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { X, Check } from 'lucide-react';
 
-export default function AddExpense({ onClose, onSave, initialData, currency = '$', exchangeRate = 1 }) {
+export default function AddExpense({ onClose, onSave, initialData, currency = '$', exchangeRate = 1, allCategories = [] }) {
   const [item, setItem] = useState(initialData?.item || '');
   const [price, setPrice] = useState(initialData?.price ? (initialData.price * exchangeRate).toString() : '');
   const [quantity, setQuantity] = useState(initialData?.quantity || 1);
@@ -33,7 +33,7 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
     });
   };
 
-  const categories = ['Food & Drink', 'Transport', 'Shopping', 'Housing', 'Utilities', 'Entertainment', 'Other'];
+  // Removed hardcoded categories
 
   return (
     <div className="modal-overlay">
@@ -93,8 +93,10 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
             <div className="flex-col gap-sm" style={{ flex: 1 }}>
               <label className="text-small">Category</label>
               <select value={category} onChange={e => setCategory(e.target.value)}>
-                {categories.map(c => (
-                  <option key={c} value={c}>{c}</option>
+                {allCategories.map(c => (
+                  <option key={c.name} value={c.name}>
+                    {c.isCustom ? `${c.icon} ${c.name}` : c.name}
+                  </option>
                 ))}
               </select>
             </div>
