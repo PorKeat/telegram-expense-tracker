@@ -8,6 +8,9 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
   const [newCatEmoji, setNewCatEmoji] = useState('🎮');
   const [pendingImport, setPendingImport] = useState(null);
   const [previewCurrency, setPreviewCurrency] = useState(currency);
+  const [editingImportIdx, setEditingImportIdx] = useState(null);
+  const [draftImportItem, setDraftImportItem] = useState('');
+  const [draftImportCategory, setDraftImportCategory] = useState('');
 
   const handleAddCategory = () => {
     if (newCatName.trim()) {
@@ -152,7 +155,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
           }
           
           // Detect headers if not found yet
-          if (!headers && cleanRow.some(c => typeof c === 'string' && (c.toLowerCase().includes('purchase') || c.toLowerCase().includes('item') || c.toLowerCase().includes('expense')))) {
+          if (!headers && cleanRow.some(c => typeof c === 'string' && (c.toLowerCase().includes('purchase') || c.toLowerCase().includes('item') || c.toLowerCase().includes('expense') || c.toLowerCase().includes('category')))) {
              headers = cleanRow.map(h => String(h).trim());
              continue;
           }
@@ -521,8 +524,71 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
             <div className="glass-card flex-col gap-sm" style={{ marginBottom: '24px', maxHeight: '50vh', overflowY: 'auto' }}>
               {pendingImport.slice(0, 50).map((exp, idx) => {
                 const previewRate = previewCurrency === '៛' ? customExchangeRate : 1;
+                const isEditing = editingImportIdx === idx;
+                
+                if (isEditing) {
+                  return (
+                    <div key={idx} className="flex-row space-between gap-sm" style={{ padding: '8px', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--surface-color)' }}>
+                      <div className="flex-col gap-xs" style={{ flex: 1 }}>
+                        <input 
+                          className="input" 
+                          value={draftImportItem} 
+                          onChange={e => setDraftImportItem(e.target.value)} 
+                          style={{ padding: '4px 8px', fontSize: '14px' }}
+                        />
+                        <select 
+                          className="input" 
+                          value={draftImportCategory} 
+                          onChange={e => setDraftImportCategory(e.target.value)}
+                          style={{ padding: '4px 8px', fontSize: '14px' }}
+                        >
+                          <option value="Food">🍔 Food</option>
+                          <option value="Transport">🚗 Transport</option>
+                          <option value="Shopping">🛍️ Shopping</option>
+                          <option value="Entertainment">🎬 Entertainment</option>
+                          <option value="Utilities">💡 Utilities</option>
+                          <option value="Other">📦 Other</option>
+                          {customCategories.map(c => (
+                            <option key={c.name} value={c.name}>{c.icon} {c.name}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="flex-col gap-xs">
+                        <button 
+                          className="button" 
+                          style={{ padding: '4px 8px', fontSize: '12px' }}
+                          onClick={() => {
+                            const newImport = [...pendingImport];
+                            newImport[idx] = { ...newImport[idx], item: draftImportItem, category: draftImportCategory };
+                            setPendingImport(newImport);
+                            setEditingImportIdx(null);
+                          }}
+                        >
+                          Save
+                        </button>
+                        <button 
+                          className="button button-secondary" 
+                          style={{ padding: '4px 8px', fontSize: '12px' }}
+                          onClick={() => setEditingImportIdx(null)}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  );
+                }
+
                 return (
-                  <div key={idx} className="flex-row space-between" style={{ padding: '8px', borderBottom: '1px solid var(--border-color)' }}>
+                  <div 
+                    key={idx} 
+                    className="flex-row space-between" 
+                    style={{ padding: '8px', borderBottom: '1px solid var(--border-color)', cursor: 'pointer' }}
+                    onClick={() => {
+                      setDraftImportItem(exp.item);
+                      setDraftImportCategory(exp.category);
+                      setEditingImportIdx(idx);
+                    }}
+                  >
                     <div className="flex-col">
                       <span style={{ fontWeight: 500 }}>{exp.item}</span>
                       <span className="text-small">{exp.category} • {exp.date.split('T')[0]}</span>
