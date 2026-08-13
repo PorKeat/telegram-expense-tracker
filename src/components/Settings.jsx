@@ -124,13 +124,56 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
       const reader = new FileReader();
       reader.onload = (e) => {
         const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
+        const workbook = XLSX.read(data, { type: 'array', cellDates: true });
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
         
-        // Convert to JSON with headers matching the first row
-        const json = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
-        processParsedData(json);
+        // Use header: 1 to get a 2D array and manually find the header row
+        const rawRows = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: "" });
+        const json = [];
+        let headers = null;
+        let currentSectionDate = null;
+        
+        for (const row of rawRows) {
+          const truthyCells = row.filter(c => c !== "");
+          
+          if (!headers) {
+            // Is this a date section header? (e.g. merged cell with one date)
+            if (truthyCells.length === 1 && (truthyCells[0] instanceof Date || String(truthyCells[0]).match(/\d/))) {
+               currentSectionDate = truthyCells[0];
+               continue;
+            }
+            
+            // Is this the actual header row?
+            if (truthyCells.some(c => typeof c === 'string' && (c.toLowerCase().includes('purchase') || c.toLowerCase().includes('item') || c.toLowerCase().includes('date') || c.toLowerCase().includes('expense') || c.toLowerCase().includes('category')))) {
+               headers = row.map(h => String(h).trim());
+               continue;
+            }
+            continue;
+          }
+          
+          // Already have headers. Is this a new date section?
+          if (truthyCells.length === 1 && (truthyCells[0] instanceof Date || String(truthyCells[0]).match(/\d/)) && !headers.includes(truthyCells[0])) {
+             currentSectionDate = truthyCells[0];
+             continue;
+          }
+          
+          // Data row
+          if (truthyCells.length > 0) {
+             const obj = {};
+             headers.forEach((h, i) => {
+               if (h) obj[h] = row[i];
+             });
+             // Inject section date if row doesn't specify one
+             if (currentSectionDate && !obj['Date'] && !obj['date'] && !obj['DATE']) {
+               obj['Date'] = currentSectionDate;
+             }
+             json.push(obj);
+          }
+        }
+        
+        // Fallback to standard parser if our heuristic found no data
+        processParsedData(json.length > 0 ? json : XLSX.utils.sheet_to_json(worksheet, { defval: "" }));
       };
       reader.readAsArrayBuffer(file);
     } else {
