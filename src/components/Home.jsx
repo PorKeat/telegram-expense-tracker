@@ -44,20 +44,20 @@ export default function Home({ expenses, currency, exchangeRate, spendLimit, all
         <div style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'var(--surface-color-elevated)' }} />
       </div>
 
-      <div className="card" style={{ marginBottom: 'var(--spacing-lg)' }}>
-        <p className="text-secondary">Today's Spending</p>
-        <h1 style={{ fontSize: '48px', margin: '8px 0', color: 'var(--text-primary)' }}>
+      <div className="glass-card" style={{ marginBottom: 'var(--spacing-lg)' }}>
+        <p className="text-secondary" style={{ textTransform: 'uppercase', letterSpacing: '1px', fontSize: '12px', fontWeight: 600 }}>Total Balance</p>
+        <h1 style={{ fontSize: '48px', margin: '8px 0', color: 'var(--text-primary)', fontWeight: 300, letterSpacing: '-2px' }}>
           {currency}{(todayTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
         </h1>
         
-        <div className="flex-row gap-md" style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border-color)' }}>
+        <div className="flex-row gap-md" style={{ marginTop: '32px', paddingTop: '24px', borderTop: '1px solid var(--surface-glass-border)' }}>
           <div className="flex-col" style={{ flex: 1 }}>
-            <p className="text-small">This Week</p>
-            <h3 style={{ marginTop: '4px' }}>{currency}{(weekTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
+            <p className="text-tiny">This Week</p>
+            <h3 style={{ marginTop: '6px', fontSize: '20px', fontWeight: 400 }}>{currency}{(weekTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
           </div>
-          <div style={{ width: '1px', height: '30px', backgroundColor: 'var(--border-color)' }}></div>
+          <div style={{ width: '1px', height: '40px', backgroundColor: 'var(--surface-glass-border)' }}></div>
           <div className="flex-col" style={{ flex: 1 }}>
-            <p className="text-small">This Month</p>
+            <p className="text-tiny">This Month</p>
             <h3 style={{ marginTop: '4px', color: isOverLimit ? 'var(--danger-color)' : 'inherit' }}>
               {currency}{(monthTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
             </h3>
@@ -65,20 +65,21 @@ export default function Home({ expenses, currency, exchangeRate, spendLimit, all
         </div>
 
         {limit > 0 && (
-          <div style={{ marginTop: '24px' }}>
-            <div className="flex-row space-between" style={{ marginBottom: '8px' }}>
-              <span className="text-small">Monthly Budget</span>
-              <span className="text-small" style={{ color: isOverLimit ? 'var(--danger-color)' : 'inherit', fontWeight: isOverLimit ? 600 : 400 }}>
+          <div style={{ marginTop: '32px' }}>
+            <div className="flex-row space-between" style={{ marginBottom: '12px' }}>
+              <span className="text-tiny">Monthly Budget</span>
+              <span className="text-tiny" style={{ color: isOverLimit ? 'var(--danger-color)' : 'inherit', fontWeight: isOverLimit ? 700 : 500 }}>
                 {progressPercent.toFixed(0)}% of {currency}{(limit * exchangeRate).toLocaleString()}
               </span>
             </div>
-            <div style={{ height: '8px', backgroundColor: 'var(--border-color)', borderRadius: '4px', overflow: 'hidden' }}>
+            <div style={{ height: '6px', backgroundColor: 'var(--surface-glass-heavy)', borderRadius: '3px', overflow: 'hidden' }}>
               <div 
                 style={{ 
                   height: '100%', 
                   width: `${progressPercent}%`, 
                   backgroundColor: isOverLimit ? 'var(--danger-color)' : 'var(--primary-color)',
-                  transition: 'width 0.3s ease, background-color 0.3s ease'
+                  boxShadow: '0 0 10px var(--primary-glow)',
+                  transition: 'width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.3s ease'
                 }} 
               />
             </div>
@@ -92,8 +93,8 @@ export default function Home({ expenses, currency, exchangeRate, spendLimit, all
         )}
       </div>
 
-      <h3 style={{ marginBottom: 'var(--spacing-md)' }}>Recent Expenses</h3>
-      <div className="card" style={{ padding: '0 var(--spacing-lg)' }}>
+      <h3 style={{ marginBottom: 'var(--spacing-md)', paddingLeft: '4px', fontWeight: 500, letterSpacing: '0.5px' }}>Recent Activity</h3>
+      <div className="glass-card" style={{ padding: '0 var(--spacing-md)' }}>
         {recentExpenses.length === 0 ? (
           <p className="text-secondary" style={{ padding: 'var(--spacing-lg) 0', textAlign: 'center' }}>No expenses yet.</p>
         ) : (

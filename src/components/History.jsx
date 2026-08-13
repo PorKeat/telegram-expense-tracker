@@ -53,7 +53,7 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
                 <h3 style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>{currency}{(dailyTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h3>
               </div>
               
-              <div className="card" style={{ padding: '0 var(--spacing-lg)' }}>
+              <div className="glass-card" style={{ padding: '0 var(--spacing-lg)' }}>
                 {grouped[date].map(expense => (
                   <div key={expense.id} className="expense-item">
                     <div className="flex-row gap-md" style={{ flex: 1 }}>

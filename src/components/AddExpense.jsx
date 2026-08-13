@@ -46,11 +46,11 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
 
       <div className="app-content" style={{ paddingBottom: '24px' }}>
         
-        <div className="card flex-col gap-lg" style={{ marginBottom: '24px' }}>
+        <div className="glass-card flex-col gap-lg" style={{ marginBottom: '24px' }}>
           {/* Main Total Display */}
           <div className="flex-col" style={{ alignItems: 'center', marginBottom: '8px' }}>
-            <p className="text-secondary">Total Amount</p>
-            <h1 style={{ fontSize: '56px', color: 'var(--primary-color)' }}>{currency}{total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h1>
+            <p className="text-secondary" style={{ textTransform: 'uppercase', letterSpacing: '1px', fontSize: '12px', fontWeight: 600 }}>Total Amount</p>
+            <h1 style={{ fontSize: '56px', color: 'var(--primary-color)', fontWeight: 300, letterSpacing: '-2px' }}>{currency}{total.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</h1>
             {quantity > 1 && (
               <p className="text-small">{quantity} × {currency}{price || '0.00'}</p>
             )}

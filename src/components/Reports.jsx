@@ -45,7 +45,7 @@ export default function Reports({ expenses, currency, exchangeRate }) {
         ))}
       </div>
 
-      <div className="card flex-col" style={{ marginBottom: '24px', alignItems: 'center', textAlign: 'center' }}>
+      <div className="glass-card flex-col" style={{ marginBottom: '24px', alignItems: 'center', textAlign: 'center' }}>
         <p className="text-secondary">Total Spending ({timeframe})</p>
         <h1 style={{ fontSize: '40px', margin: '8px 0', color: 'var(--text-primary)' }}>
           {currency}{(totalSpending * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
@@ -58,7 +58,7 @@ export default function Reports({ expenses, currency, exchangeRate }) {
       </div>
 
       <h3 style={{ marginBottom: '16px' }}>Category Breakdown</h3>
-      <div className="card flex-col gap-lg">
+      <div className="glass-card flex-col gap-lg">
         {sortedCategories.length === 0 ? (
           <p className="text-secondary text-center">No data for this period.</p>
         ) : (

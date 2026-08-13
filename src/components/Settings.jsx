@@ -145,7 +145,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
       </div>
 
       <h3 style={{ marginBottom: '16px' }}>Appearance</h3>
-      <div className="card flex-col gap-lg" style={{ marginBottom: '32px' }}>
+      <div className="glass-card flex-col gap-lg" style={{ marginBottom: '32px' }}>
         
         {/* Theme Toggle */}
         <div className="flex-row space-between">
@@ -179,7 +179,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
       </div>
 
       <h3 style={{ marginBottom: '16px' }}>Preferences</h3>
-      <div className="card flex-col gap-md" style={{ marginBottom: '32px' }}>
+      <div className="glass-card flex-col gap-md" style={{ marginBottom: '32px' }}>
         <div className="flex-row space-between">
           <div className="flex-col">
             <span style={{ fontWeight: 500 }}>Currency</span>
@@ -258,7 +258,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
       </div>
 
       <h3 style={{ marginBottom: '16px' }}>Custom Categories</h3>
-      <div className="card flex-col gap-md" style={{ marginBottom: '32px' }}>
+      <div className="glass-card flex-col gap-md" style={{ marginBottom: '32px' }}>
         {customCategories.length === 0 ? (
           <p className="text-secondary text-center" style={{ padding: '8px 0' }}>No custom categories yet.</p>
         ) : (
@@ -302,7 +302,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
       </div>
 
       <h3 style={{ marginBottom: '16px' }}>Data Management</h3>
-      <div className="card flex-col gap-md">
+      <div className="glass-card flex-col gap-md">
         
         {/* Hidden file input */}
         <input 
@@ -360,7 +360,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
               Found {pendingImport.length} expenses to import. Please review them below:
             </p>
             
-            <div className="card flex-col gap-sm" style={{ marginBottom: '24px', maxHeight: '50vh', overflowY: 'auto' }}>
+            <div className="glass-card flex-col gap-sm" style={{ marginBottom: '24px', maxHeight: '50vh', overflowY: 'auto' }}>
               {pendingImport.slice(0, 50).map((exp, idx) => (
                 <div key={idx} className="flex-row space-between" style={{ padding: '8px', borderBottom: '1px solid var(--border-color)' }}>
                   <div className="flex-col">

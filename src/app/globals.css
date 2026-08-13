@@ -1,30 +1,34 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Strict 3-Color Palette */
-  --bg-color: #1b4332; /* Emerald Green */
-  --surface-color: #3e2723; /* Dark Brown */
-  --surface-color-elevated: #3e2723; /* Dark Brown */
+  /* Core Brand Colors */
+  --emerald-raw: #1b4332;
+  --brown-raw: #3e2723;
+  --gold-raw: #d4af37;
+
+  /* Abstracted Theme Values */
+  --bg-gradient: radial-gradient(circle at top right, #1b4332, #102a20 40%, #0d1a15 80%, #3e2723 120%);
   
-  --primary-color: #d4af37; /* Gold */
+  --surface-glass: rgba(62, 39, 35, 0.45);
+  --surface-glass-heavy: rgba(62, 39, 35, 0.7);
+  --surface-glass-border: rgba(212, 175, 55, 0.15);
+  --surface-glass-border-glow: rgba(212, 175, 55, 0.4);
+
+  --primary-color: #d4af37;
   --primary-glow: rgba(212, 175, 55, 0.4);
   
-  --accent-gold: #d4af37;
-  --accent-brown: #3e2723;
-
-  --text-primary: #d4af37; /* Gold Text */
-  --text-secondary: rgba(212, 175, 55, 0.7); /* Muted Gold */
-  --text-tertiary: rgba(212, 175, 55, 0.5); /* Very Muted Gold */
+  --text-primary: #d4af37; /* Gold */
+  --text-secondary: rgba(212, 175, 55, 0.75); /* Muted Gold */
+  --text-tertiary: rgba(212, 175, 55, 0.45); /* Very Muted */
   
-  --danger-color: #d4af37; /* Replaced red with gold to stick to 3 colors */
-  --success-color: #d4af37; /* Replaced green with gold */
+  --danger-color: #d4af37; /* Kept Gold as per strict palette */
+  --success-color: #d4af37;
   
-  --border-color: #1b4332; /* Emerald Green Borders */
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 32px;
+  --radius-pill: 9999px;
   
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 32px;
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   
   --spacing-xs: 4px;
@@ -32,34 +36,40 @@
   --spacing-md: 16px;
   --spacing-lg: 24px;
   --spacing-xl: 32px;
+  --spacing-xxl: 48px;
 }
 
+/* Light mode override - sticking strictly to the 3 colors but inverted brightness */
 :root.light-mode {
-  --bg-color: #f2f2f7;
-  --surface-color: #ffffff;
-  --surface-color-elevated: #e5e5ea;
-  --text-primary: #000000;
-  --text-secondary: #8e8e93;
-  --text-tertiary: #c7c7cc;
-  --border-color: rgba(0, 0, 0, 0.08);
+  --bg-gradient: radial-gradient(circle at top right, #d4af37, #fdf9ee 40%, #ffffff 80%);
+  --surface-glass: rgba(27, 67, 50, 0.08);
+  --surface-glass-heavy: rgba(27, 67, 50, 0.15);
+  --surface-glass-border: rgba(27, 67, 50, 0.2);
+  --surface-glass-border-glow: rgba(27, 67, 50, 0.3);
+  
+  --primary-color: #1b4332;
+  --primary-glow: rgba(27, 67, 50, 0.2);
+  
+  --text-primary: #3e2723;
+  --text-secondary: rgba(62, 39, 35, 0.7);
+  --text-tertiary: rgba(62, 39, 35, 0.4);
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   font-family: var(--font-family);
-  background-color: var(--bg-color); /* Matches the app strictly */
+  background: var(--bg-gradient);
+  background-attachment: fixed;
   color: var(--text-primary);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
 }
 
@@ -67,53 +77,93 @@ body {
   width: 100%;
   height: 100vh;
   max-height: 100vh;
-  background-color: var(--bg-color);
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
-h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
-h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
-h3 { font-size: 18px; font-weight: 600; }
+/* Cinematic Typography */
+h1 { font-size: 40px; font-weight: 300; letter-spacing: -1.5px; line-height: 1.1; }
+h2 { font-size: 24px; font-weight: 400; letter-spacing: -0.5px; }
+h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.2px; }
 .text-body { font-size: 16px; font-weight: 400; }
 .text-small { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
+.text-tiny { font-size: 12px; font-weight: 500; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; }
 
-.card {
-  background-color: var(--surface-color);
+/* Luxury Glassmorphism Utilities */
+.glass-card {
+  background: var(--surface-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--surface-glass-border);
   border-radius: var(--radius-lg);
   padding: var(--spacing-lg);
-  border: 1px solid var(--border-color);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  transition: border-color 0.3s ease, transform 0.2s ease;
 }
 
+.glass-card:hover {
+  border-color: var(--surface-glass-border-glow);
+}
+
+.glass-pill {
+  background: var(--surface-glass-heavy);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--surface-glass-border);
+  border-radius: var(--radius-pill);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Buttons */
 .button {
-  background-color: var(--primary-color);
-  color: var(--bg-color); /* Emerald text on Gold button */
+  background: var(--primary-color);
+  color: var(--emerald-raw); /* Force emerald text on gold */
   border: none;
-  border-radius: var(--radius-md);
-  padding: 16px var(--spacing-lg);
+  border-radius: var(--radius-pill);
+  padding: 18px var(--spacing-lg);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   width: 100%;
-  transition: transform 0.1s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 15px var(--primary-glow);
+  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+  box-shadow: 0 8px 24px var(--primary-glow);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
-.button:active { transform: scale(0.98); }
-.button-secondary { background-color: var(--surface-color-elevated); color: var(--primary-color); box-shadow: none; }
+:root.light-mode .button {
+  color: var(--gold-raw);
+}
 
+.button:active { 
+  transform: scale(0.97); 
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+.button-secondary { 
+  background: var(--surface-glass); 
+  color: var(--primary-color); 
+  box-shadow: none; 
+  border: 1px solid var(--surface-glass-border);
+}
+
+.button-secondary:active {
+  background: var(--surface-glass-heavy);
+}
+
+/* App Container */
 .app-content {
   flex: 1;
   overflow-y: auto;
-  padding: var(--spacing-lg) var(--spacing-lg) 100px var(--spacing-lg);
+  padding: var(--spacing-lg) var(--spacing-md) 140px var(--spacing-md);
   scrollbar-width: none;
+  scroll-behavior: smooth;
 }
 .app-content::-webkit-scrollbar { display: none; }
 
@@ -121,40 +171,51 @@ h3 { font-size: 18px; font-weight: 600; }
 .flex-row { display: flex; flex-direction: row; align-items: center; }
 .flex-col { display: flex; flex-direction: column; }
 .space-between { justify-content: space-between; }
+.gap-xs { gap: var(--spacing-xs); }
 .gap-sm { gap: var(--spacing-sm); }
 .gap-md { gap: var(--spacing-md); }
 .gap-lg { gap: var(--spacing-lg); }
 
+/* Inputs */
 input, select {
   width: 100%;
-  background-color: var(--surface-color-elevated);
-  border: 1px solid var(--border-color);
+  background: var(--surface-glass);
+  border: 1px solid var(--surface-glass-border);
   color: var(--text-primary);
   border-radius: var(--radius-md);
-  padding: 16px;
+  padding: 18px 20px;
   font-size: 16px;
+  font-weight: 500;
   font-family: inherit;
   outline: none;
-  transition: border-color 0.2s ease;
+  transition: all 0.3s ease;
   -webkit-appearance: none;
 }
-input:focus, select:focus { border-color: var(--primary-color); }
-input::placeholder { color: var(--text-tertiary); }
+input:focus, select:focus { 
+  border-color: var(--primary-color); 
+  background: var(--surface-glass-heavy);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+}
+input::placeholder { color: var(--text-tertiary); font-weight: 400; }
 
-/* Navigation & FAB */
-.bottom-nav {
+/* Floating Pill Navigation */
+.floating-nav-container {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 80px;
-  background-color: var(--surface-color); /* Brown nav */
-  border-top: 1px solid var(--border-color);
+  bottom: env(safe-area-inset-bottom, 24px);
+  left: var(--spacing-md);
+  right: var(--spacing-md);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+}
+
+.bottom-nav-pill {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding-bottom: env(safe-area-inset-bottom, 10px);
-  z-index: 100;
+  padding: 10px 16px;
+  width: 100%;
+  max-width: 400px;
 }
 
 .nav-item {
@@ -165,77 +226,100 @@ input::placeholder { color: var(--text-tertiary); }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   cursor: pointer;
-  transition: color 0.2s ease;
-  width: 60px;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+}
+
+.nav-item:hover {
+  color: var(--text-secondary);
 }
 
 .nav-item.active {
-  color: var(--accent-gold);
+  color: var(--primary-color);
+  background: rgba(212, 175, 55, 0.1);
 }
 
 .nav-label {
-  font-size: 10px;
-  font-weight: 500;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+/* FAB */
+.fab-container {
+  position: absolute;
+  bottom: env(safe-area-inset-bottom, 90px);
+  right: 24px;
+  z-index: 90;
 }
 
 .fab {
-  position: absolute;
-  bottom: 100px; /* Above nav */
-  right: 24px;
-  width: 56px;
-  height: 56px;
-  border-radius: 28px;
-  background-color: var(--primary-color); /* Gold */
-  color: var(--bg-color); /* Emerald Icon */
+  width: 64px;
+  height: 64px;
+  border-radius: 32px;
+  background: var(--primary-color);
+  color: var(--emerald-raw);
   border: none;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 4px 20px var(--primary-glow);
+  box-shadow: 0 8px 32px var(--primary-glow);
   cursor: pointer;
-  z-index: 90;
-  transition: transform 0.1s ease;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+:root.light-mode .fab {
+  color: var(--gold-raw);
+}
+
+.fab:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 12px 40px var(--primary-glow);
+}
 .fab:active {
-  transform: scale(0.9);
+  transform: translateY(2px) scale(0.95);
 }
 
 /* Modals / Screens */
 .modal-overlay {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-color: var(--bg-color);
+  background: var(--bg-gradient);
   z-index: 200;
   display: flex;
   flex-direction: column;
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
 
 @keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
+/* Custom Lists */
 .expense-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-md) 0;
-  border-bottom: 1px solid var(--border-color);
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--surface-glass-border);
+  transition: background 0.2s ease;
 }
-.expense-item:last-child {
-  border-bottom: none;
-}
+.expense-item:last-child { border-bottom: none; }
+.expense-item:active { background: rgba(212, 175, 55, 0.05); }
+
 .expense-icon {
-  width: 48px;
-  height: 48px;
+  width: 52px;
+  height: 52px;
   border-radius: var(--radius-md);
-  background-color: var(--bg-color); /* Emerald Background */
+  background: var(--surface-glass);
+  border: 1px solid var(--surface-glass-border);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--primary-color); /* Gold Icon */
+  color: var(--primary-color);
+  font-size: 24px;
 }
