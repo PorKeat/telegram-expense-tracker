@@ -30,15 +30,18 @@ export default function Reports({ expenses, currency, exchangeRate }) {
             onClick={() => setTimeframe(t)}
             style={{ 
               flex: 1, 
-              padding: '8px', 
-              borderRadius: '20px', 
-              border: 'none',
-              backgroundColor: timeframe === t ? 'var(--primary-color)' : 'var(--surface-color-elevated)',
-              color: timeframe === t ? 'var(--bg-color)' : 'var(--text-secondary)',
+              padding: '10px', 
+              borderRadius: '24px', 
+              border: timeframe === t ? '1px solid rgba(255, 255, 255, 0.4)' : '1px solid rgba(255, 255, 255, 0.05)',
+              background: timeframe === t ? 'var(--primary-gradient)' : 'rgba(255, 255, 255, 0.03)',
+              color: timeframe === t ? 'var(--emerald-raw)' : 'var(--text-secondary)',
               textTransform: 'capitalize',
-              fontWeight: 500,
+              fontWeight: timeframe === t ? 600 : 500,
               cursor: 'pointer',
-              outline: 'none'
+              outline: 'none',
+              boxShadow: timeframe === t ? '0 4px 15px var(--primary-glow), inset 0 2px 5px rgba(255,255,255,0.4)' : 'none',
+              textShadow: timeframe === t ? '0 1px 2px rgba(0,0,0,0.1)' : 'none',
+              transition: 'all 0.3s ease'
             }}
           >
             {t}
@@ -75,9 +78,9 @@ export default function Reports({ expenses, currency, exchangeRate }) {
                   <div style={{ 
                     width: `${percentage}%`, 
                     height: '100%', 
-                    backgroundColor: 'var(--primary-color)',
+                    background: 'var(--primary-gradient)',
                     borderRadius: '4px',
-                    boxShadow: '0 0 10px var(--primary-glow)'
+                    boxShadow: '0 0 15px var(--primary-glow)'
                   }} />
                 </div>
               </div>

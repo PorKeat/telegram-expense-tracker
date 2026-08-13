@@ -60,19 +60,19 @@ export default function Home({ expenses, currency, exchangeRate, spendLimit, all
                 {progressPercent.toFixed(0)}% of {currency}{(limit * exchangeRate).toLocaleString(undefined, currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0})}
               </span>
             </div>
-            <div style={{ height: '6px', backgroundColor: 'var(--surface-elevated)', borderRadius: '3px', overflow: 'hidden' }}>
+            <div style={{ height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.2)' }}>
               <div 
                 style={{ 
                   height: '100%', 
                   width: `${progressPercent}%`, 
-                  backgroundColor: isOverLimit ? 'var(--danger-color)' : 'var(--primary-color)',
-                  boxShadow: '0 0 10px var(--primary-glow)',
-                  transition: 'width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.3s ease'
+                  background: isOverLimit ? 'linear-gradient(135deg, #ff8a8a, var(--danger-color))' : 'var(--primary-gradient)',
+                  boxShadow: '0 0 15px var(--primary-glow)',
+                  transition: 'width 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.3s ease'
                 }} 
               />
             </div>
             {isOverLimit && (
-              <div className="flex-row" style={{ marginTop: '12px', gap: '8px', color: 'var(--bg-color)', backgroundColor: 'var(--danger-color)', padding: '12px', borderRadius: 'var(--radius-sm)' }}>
+              <div className="flex-row" style={{ marginTop: '12px', gap: '8px', color: '#fff', background: 'linear-gradient(135deg, rgba(217, 56, 56, 0.9), rgba(153, 34, 34, 0.9))', padding: '12px', borderRadius: 'var(--radius-sm)', border: '1px solid rgba(255,255,255,0.2)', boxShadow: '0 4px 15px rgba(217,56,56,0.3)' }}>
                 <AlertTriangle size={16} />
                 <span style={{ fontSize: '12px', fontWeight: 600 }}>Limit Exceeded by {currency}{((monthTotal - limit) * exchangeRate).toLocaleString(undefined, currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0})}!</span>
               </div>

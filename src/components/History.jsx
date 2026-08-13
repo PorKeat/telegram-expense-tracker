@@ -129,7 +129,7 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
             <div className="flex-col gap-lg" style={{ overflowY: 'auto' }}>
               <div className="flex-col gap-sm">
                 <label className="text-secondary text-small">Search Items</label>
-                <div className="flex-row gap-sm" style={{ backgroundColor: 'var(--surface-color-elevated)', padding: '12px 16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)' }}>
+                <div className="flex-row gap-sm" style={{ background: 'var(--surface-elevated)', padding: '12px 16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)', boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.1)' }}>
                   <Search size={20} color="var(--text-secondary)" />
                   <input 
                     type="text" 
@@ -150,13 +150,13 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
                       onClick={() => setFilterDateRange(range)}
                       style={{
                         padding: '8px 16px',
-                        borderRadius: 'var(--radius-pill)',
-                        border: filterDateRange === range ? '1px solid var(--primary-color)' : '1px solid var(--surface-border)',
-                        backgroundColor: filterDateRange === range ? 'var(--primary-glow)' : 'var(--surface-color-elevated)',
-                        color: filterDateRange === range ? 'var(--primary-color)' : 'var(--text-secondary)',
-                        fontSize: '14px',
-                        fontWeight: 500,
+                        borderRadius: '20px',
+                        border: filterDateRange === range ? '1px solid rgba(255,255,255,0.4)' : '1px solid var(--surface-border)',
+                        background: filterDateRange === range ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.03)',
+                        color: filterDateRange === range ? 'var(--emerald-raw)' : 'var(--text-primary)',
                         cursor: 'pointer',
+                        fontWeight: filterDateRange === range ? 600 : 400,
+                        boxShadow: filterDateRange === range ? '0 4px 15px var(--primary-glow), inset 0 2px 5px rgba(255,255,255,0.4)' : 'none',
                         transition: 'all 0.2s ease'
                       }}
                     >
@@ -173,13 +173,13 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
                     onClick={() => setFilterCategory('All')}
                     style={{
                       padding: '8px 16px',
-                      borderRadius: 'var(--radius-pill)',
-                      border: filterCategory === 'All' ? '1px solid var(--primary-color)' : '1px solid var(--surface-border)',
-                      backgroundColor: filterCategory === 'All' ? 'var(--primary-glow)' : 'var(--surface-color-elevated)',
-                      color: filterCategory === 'All' ? 'var(--primary-color)' : 'var(--text-secondary)',
-                      fontSize: '14px',
-                      fontWeight: 500,
+                      borderRadius: '20px',
+                      border: filterCategory === 'All' ? '1px solid rgba(255,255,255,0.4)' : '1px solid var(--surface-border)',
+                      background: filterCategory === 'All' ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.03)',
+                      color: filterCategory === 'All' ? 'var(--emerald-raw)' : 'var(--text-primary)',
                       cursor: 'pointer',
+                      fontWeight: filterCategory === 'All' ? 600 : 400,
+                      boxShadow: filterCategory === 'All' ? '0 4px 15px var(--primary-glow), inset 0 2px 5px rgba(255,255,255,0.4)' : 'none',
                       transition: 'all 0.2s ease'
                     }}
                   >
@@ -191,13 +191,13 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
                       onClick={() => setFilterCategory(c.name)}
                       style={{
                         padding: '8px 16px',
-                        borderRadius: 'var(--radius-pill)',
-                        border: filterCategory === c.name ? '1px solid var(--primary-color)' : '1px solid var(--surface-border)',
-                        backgroundColor: filterCategory === c.name ? 'var(--primary-glow)' : 'var(--surface-color-elevated)',
-                        color: filterCategory === c.name ? 'var(--primary-color)' : 'var(--text-secondary)',
-                        fontSize: '14px',
-                        fontWeight: 500,
+                        borderRadius: '20px',
+                        border: filterCategory === c.name ? '1px solid rgba(255,255,255,0.4)' : '1px solid var(--surface-border)',
+                        background: filterCategory === c.name ? 'var(--primary-gradient)' : 'rgba(255,255,255,0.03)',
+                        color: filterCategory === c.name ? 'var(--emerald-raw)' : 'var(--text-primary)',
                         cursor: 'pointer',
+                        fontWeight: filterCategory === c.name ? 600 : 400,
+                        boxShadow: filterCategory === c.name ? '0 4px 15px var(--primary-glow), inset 0 2px 5px rgba(255,255,255,0.4)' : 'none',
                         transition: 'all 0.2s ease'
                       }}
                     >

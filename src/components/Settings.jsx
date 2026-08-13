@@ -422,7 +422,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
           />
           <button 
             onClick={handleAddCategory}
-            style={{ backgroundColor: 'var(--primary-color)', color: 'var(--bg-color)', border: 'none', borderRadius: '24px', width: '48px', height: '48px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+            style={{ background: 'var(--primary-gradient)', color: 'var(--emerald-raw)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '24px', width: '48px', height: '48px', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 4px 15px var(--primary-glow), inset 0 2px 5px rgba(255,255,255,0.4)', textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
           >
             <Plus size={20} />
           </button>
