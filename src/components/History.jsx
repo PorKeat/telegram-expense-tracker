@@ -136,7 +136,7 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
                     placeholder="Search by name..."
                     value={filterQuery}
                     onChange={(e) => setFilterQuery(e.target.value)}
-                    style={{ border: 'none', background: 'transparent', color: 'var(--text-primary)', outline: 'none', flex: 1, fontSize: '16px', width: '100%' }}
+                    style={{ border: 'none', background: 'transparent', color: 'var(--text-primary)', outline: 'none', flex: 1, fontSize: '16px', width: '100%', padding: 0, boxShadow: 'none' }}
                   />
                 </div>
               </div>
