@@ -30,7 +30,6 @@ export default function Home({ expenses, currency, exchangeRate, spendLimit, all
     <div className="app-content">
       <div className="header flex-row space-between" style={{ paddingTop: '20px' }}>
         <h2>Dashboard</h2>
-        <div style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: 'var(--surface-color-elevated)' }} />
       </div>
 
       <div className="glass-card" style={{ marginBottom: 'var(--spacing-lg)' }}>
