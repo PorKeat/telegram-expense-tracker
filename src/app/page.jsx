@@ -12,8 +12,10 @@ import Reports from '../components/Reports';
 import BottomNav from '../components/BottomNav';
 import Settings from '../components/Settings';
 import Dialog from '../components/Dialog';
+import LoadingSkeleton from '../components/LoadingSkeleton';
 
 function App() {
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('home');
   const [expenses, setExpenses] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -76,6 +78,7 @@ function App() {
       if (data) {
         setExpenses(data);
       }
+      setIsInitialLoading(false);
     };
     fetchExpenses();
 
@@ -254,6 +257,10 @@ function App() {
   };
 
   const renderContent = () => {
+    if (isInitialLoading) {
+      return <LoadingSkeleton />;
+    }
+
     switch (activeTab) {
       case 'home':
         return <Home expenses={expenses} currency={currency} exchangeRate={exchangeRate} spendLimit={spendLimit} allCategories={allCategories} />;
