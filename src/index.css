@@ -1,0 +1,252 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Strict 3-Color Palette */
+  --bg-color: #1b4332; /* Emerald Green */
+  --surface-color: #3e2723; /* Dark Brown */
+  --surface-color-elevated: #3e2723; /* Dark Brown */
+  
+  --primary-color: #d4af37; /* Gold */
+  --primary-glow: rgba(212, 175, 55, 0.4);
+  
+  --accent-gold: #d4af37;
+  --accent-brown: #3e2723;
+
+  --text-primary: #d4af37; /* Gold Text */
+  --text-secondary: rgba(212, 175, 55, 0.7); /* Muted Gold */
+  --text-tertiary: rgba(212, 175, 55, 0.5); /* Very Muted Gold */
+  
+  --danger-color: #d4af37; /* Replaced red with gold to stick to 3 colors */
+  --success-color: #d4af37; /* Replaced green with gold */
+  
+  --border-color: #1b4332; /* Emerald Green Borders */
+  
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+}
+
+:root.light-mode {
+  --bg-color: #f2f2f7;
+  --surface-color: #ffffff;
+  --surface-color-elevated: #e5e5ea;
+  --text-primary: #000000;
+  --text-secondary: #8e8e93;
+  --text-tertiary: #c7c7cc;
+  --border-color: rgba(0, 0, 0, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-color); /* Matches the app strictly */
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  max-width: 430px;
+  height: 100vh;
+  max-height: 100vh;
+  background-color: var(--bg-color);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+}
+
+@media (min-width: 431px) {
+  #root {
+    height: 90vh;
+    max-height: 850px;
+    border-radius: 40px;
+    border: 8px solid #333;
+  }
+}
+
+h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.3px; }
+h3 { font-size: 18px; font-weight: 600; }
+.text-body { font-size: 16px; font-weight: 400; }
+.text-small { font-size: 14px; font-weight: 500; color: var(--text-secondary); }
+
+.card {
+  background-color: var(--surface-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.button {
+  background-color: var(--primary-color);
+  color: var(--bg-color); /* Emerald text on Gold button */
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 16px var(--spacing-lg);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: transform 0.1s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 15px var(--primary-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.button:active { transform: scale(0.98); }
+.button-secondary { background-color: var(--surface-color-elevated); color: var(--primary-color); box-shadow: none; }
+
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--spacing-lg) var(--spacing-lg) 100px var(--spacing-lg);
+  scrollbar-width: none;
+}
+.app-content::-webkit-scrollbar { display: none; }
+
+.header { padding-bottom: var(--spacing-lg); }
+.flex-row { display: flex; flex-direction: row; align-items: center; }
+.flex-col { display: flex; flex-direction: column; }
+.space-between { justify-content: space-between; }
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+.gap-lg { gap: var(--spacing-lg); }
+
+input, select {
+  width: 100%;
+  background-color: var(--surface-color-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  font-size: 16px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease;
+  -webkit-appearance: none;
+}
+input:focus, select:focus { border-color: var(--primary-color); }
+input::placeholder { color: var(--text-tertiary); }
+
+/* Navigation & FAB */
+.bottom-nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background-color: var(--surface-color); /* Brown nav */
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding-bottom: env(safe-area-inset-bottom, 10px);
+  z-index: 100;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  width: 60px;
+}
+
+.nav-item.active {
+  color: var(--accent-gold);
+}
+
+.nav-label {
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.fab {
+  position: absolute;
+  bottom: 100px; /* Above nav */
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  background-color: var(--primary-color); /* Gold */
+  color: var(--bg-color); /* Emerald Icon */
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 20px var(--primary-glow);
+  cursor: pointer;
+  z-index: 90;
+  transition: transform 0.1s ease;
+}
+
+.fab:active {
+  transform: scale(0.9);
+}
+
+/* Modals / Screens */
+.modal-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: var(--bg-color);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.expense-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) 0;
+  border-bottom: 1px solid var(--border-color);
+}
+.expense-item:last-child {
+  border-bottom: none;
+}
+.expense-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-color); /* Emerald Background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary-color); /* Gold Icon */
+}
