@@ -11,11 +11,15 @@
   --surface-glass-border-glow: #d4af3766;
   --primary-color: #d4af37;
   --primary-glow: #d4af3766;
-  --text-primary: #d4af37;
-  --text-secondary: #d4af37bf;
-  --text-tertiary: #d4af3773;
+  --text-primary: #f2e1a6;
+  --text-secondary: #d4af37;
+  --text-tertiary: #a8882b;
   --danger-color: #d4af37;
   --success-color: #d4af37;
+  --bg-color: var(--emerald-raw);
+  --surface-color: var(--surface-glass);
+  --surface-color-elevated: var(--surface-glass-heavy);
+  --border-color: var(--surface-glass-border);
   --radius-sm: 12px;
   --radius-md: 20px;
   --radius-lg: 32px;
@@ -37,9 +41,13 @@
   --surface-glass-border-glow: #1b43324d;
   --primary-color: #1b4332;
   --primary-glow: #1b433233;
-  --text-primary: #3e2723;
-  --text-secondary: #3e2723b3;
-  --text-tertiary: #3e272366;
+  --text-primary: #1b4332;
+  --text-secondary: #3e2723;
+  --text-tertiary: #6b453d;
+  --bg-color: var(--gold-raw);
+  --surface-color: var(--surface-glass);
+  --surface-color-elevated: var(--surface-glass-heavy);
+  --border-color: var(--surface-glass-border);
 }
 
 * {
@@ -144,6 +152,7 @@ h3 {
   text-transform: uppercase;
   letter-spacing: 1px;
   border: none;
+  outline: none;
   font-size: 16px;
   font-weight: 600;
   transition: all .2s cubic-bezier(.25, 1, .5, 1);
@@ -268,6 +277,7 @@ input::placeholder {
   border-radius: var(--radius-md);
   background: none;
   border: none;
+  outline: none;
   flex-direction: column;
   justify-content: center;
   align-items: center;

@@ -1796,7 +1796,8 @@ function Reports({ expenses, currency, exchangeRate }) {
                             color: timeframe === t ? 'var(--bg-color)' : 'var(--text-secondary)',
                             textTransform: 'capitalize',
                             fontWeight: 500,
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            outline: 'none'
                         },
                         children: t
                     }, t, false, {
@@ -1826,7 +1827,7 @@ function Reports({ expenses, currency, exchangeRate }) {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/Reports.jsx",
-                        lineNumber: 49,
+                        lineNumber: 50,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
@@ -1844,7 +1845,7 @@ function Reports({ expenses, currency, exchangeRate }) {
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/Reports.jsx",
-                        lineNumber: 50,
+                        lineNumber: 51,
                         columnNumber: 9
                     }, this),
                     highestCategory && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1861,19 +1862,19 @@ function Reports({ expenses, currency, exchangeRate }) {
                                 children: highestCategory[0]
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Reports.jsx",
-                                lineNumber: 55,
+                                lineNumber: 56,
                                 columnNumber: 30
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/components/Reports.jsx",
-                        lineNumber: 54,
+                        lineNumber: 55,
                         columnNumber: 11
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/components/Reports.jsx",
-                lineNumber: 48,
+                lineNumber: 49,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1883,7 +1884,7 @@ function Reports({ expenses, currency, exchangeRate }) {
                 children: "Category Breakdown"
             }, void 0, false, {
                 fileName: "[project]/src/components/Reports.jsx",
-                lineNumber: 60,
+                lineNumber: 61,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1893,7 +1894,7 @@ function Reports({ expenses, currency, exchangeRate }) {
                     children: "No data for this period."
                 }, void 0, false, {
                     fileName: "[project]/src/components/Reports.jsx",
-                    lineNumber: 63,
+                    lineNumber: 64,
                     columnNumber: 11
                 }, this) : sortedCategories.map(([category, amount])=>{
                     const percentage = amount / maxCategoryTotal * 100;
@@ -1911,7 +1912,7 @@ function Reports({ expenses, currency, exchangeRate }) {
                                         children: category
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/Reports.jsx",
-                                        lineNumber: 70,
+                                        lineNumber: 71,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1928,13 +1929,13 @@ function Reports({ expenses, currency, exchangeRate }) {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/components/Reports.jsx",
-                                        lineNumber: 71,
+                                        lineNumber: 72,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/Reports.jsx",
-                                lineNumber: 69,
+                                lineNumber: 70,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f2e$pnpm$2f$next$40$16$2e$3$2e$0_$40$babel$2b$core$40$7$2e$29$2e$7_react$2d$dom$40$19$2e$2$2e$8_react$40$19$2e$2$2e$8_$5f$react$40$19$2e$2$2e$8$2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1955,24 +1956,24 @@ function Reports({ expenses, currency, exchangeRate }) {
                                     }
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/Reports.jsx",
-                                    lineNumber: 74,
+                                    lineNumber: 75,
                                     columnNumber: 19
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/src/components/Reports.jsx",
-                                lineNumber: 73,
+                                lineNumber: 74,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, category, true, {
                         fileName: "[project]/src/components/Reports.jsx",
-                        lineNumber: 68,
+                        lineNumber: 69,
                         columnNumber: 15
                     }, this);
                 })
             }, void 0, false, {
                 fileName: "[project]/src/components/Reports.jsx",
-                lineNumber: 61,
+                lineNumber: 62,
                 columnNumber: 7
             }, this)
         ]

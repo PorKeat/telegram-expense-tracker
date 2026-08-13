@@ -17,12 +17,18 @@
   --primary-color: #d4af37;
   --primary-glow: rgba(212, 175, 55, 0.4);
   
-  --text-primary: #d4af37; /* Gold */
-  --text-secondary: rgba(212, 175, 55, 0.75); /* Muted Gold */
-  --text-tertiary: rgba(212, 175, 55, 0.45); /* Very Muted */
+  --text-primary: #f2e1a6; /* Very light gold for primary text in dark mode */
+  --text-secondary: #d4af37; /* Standard Gold */
+  --text-tertiary: #a8882b; /* Darker Gold */
   
   --danger-color: #d4af37; /* Kept Gold as per strict palette */
   --success-color: #d4af37;
+  
+  /* Legacy compatibility aliases for inline styles */
+  --bg-color: var(--emerald-raw);
+  --surface-color: var(--surface-glass);
+  --surface-color-elevated: var(--surface-glass-heavy);
+  --border-color: var(--surface-glass-border);
   
   --radius-sm: 12px;
   --radius-md: 20px;
@@ -50,9 +56,15 @@
   --primary-color: #1b4332;
   --primary-glow: rgba(27, 67, 50, 0.2);
   
-  --text-primary: #3e2723;
-  --text-secondary: rgba(62, 39, 35, 0.7);
-  --text-tertiary: rgba(62, 39, 35, 0.4);
+  --text-primary: #1b4332; /* Deep Emerald */
+  --text-secondary: #3e2723; /* Dark Brown */
+  --text-tertiary: #6b453d; /* Lighter Brown */
+
+  /* Legacy compatibility aliases for inline styles (Light Mode) */
+  --bg-color: var(--gold-raw);
+  --surface-color: var(--surface-glass);
+  --surface-color-elevated: var(--surface-glass-heavy);
+  --border-color: var(--surface-glass-border);
 }
 
 * {
@@ -135,6 +147,7 @@ h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.2px; }
   gap: var(--spacing-sm);
   text-transform: uppercase;
   letter-spacing: 1px;
+  outline: none;
 }
 
 :root.light-mode .button {
@@ -231,6 +244,7 @@ input::placeholder { color: var(--text-tertiary); font-weight: 400; }
   transition: all 0.3s ease;
   padding: 8px 12px;
   border-radius: var(--radius-md);
+  outline: none;
 }
 
 .nav-item:hover {
