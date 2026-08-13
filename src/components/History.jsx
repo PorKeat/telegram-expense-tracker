@@ -4,12 +4,15 @@ import { Edit2, Trash2, Search } from 'lucide-react';
 
 export default function History({ expenses, currency, exchangeRate, onEdit, onDelete, allCategories = [] }) {
   const [filterQuery, setFilterQuery] = useState('');
+  const [filterCategory, setFilterCategory] = useState('All');
   
   // Filter expenses
-  const filteredExpenses = expenses.filter(expense => 
-    expense.item.toLowerCase().includes(filterQuery.toLowerCase()) ||
-    expense.category.toLowerCase().includes(filterQuery.toLowerCase())
-  );
+  const filteredExpenses = expenses.filter(expense => {
+    const matchesSearch = expense.item.toLowerCase().includes(filterQuery.toLowerCase()) || 
+                          expense.category.toLowerCase().includes(filterQuery.toLowerCase());
+    const matchesCategory = filterCategory === 'All' || expense.category === filterCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   // Sort expenses by date descending
   const sortedExpenses = [...filteredExpenses].sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -35,17 +38,37 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
         <h2>Expense History</h2>
       </div>
 
-      <div style={{ marginBottom: '24px', padding: '0 4px' }}>
-        <div className="flex-row gap-sm" style={{ backgroundColor: 'var(--surface-color-elevated)', padding: '12px 16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)' }}>
-          <Search size={20} color="var(--text-secondary)" />
+      <div style={{ marginBottom: '24px', padding: '0 4px', display: 'flex', gap: '8px' }}>
+        <div className="flex-row gap-sm" style={{ flex: 1, backgroundColor: 'var(--surface-color-elevated)', padding: '8px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)' }}>
+          <Search size={16} color="var(--text-secondary)" />
           <input 
             type="text" 
-            placeholder="Search by item or category..."
+            placeholder="Search items..."
             value={filterQuery}
             onChange={(e) => setFilterQuery(e.target.value)}
-            style={{ border: 'none', background: 'transparent', color: 'var(--text-primary)', outline: 'none', flex: 1, fontSize: '16px', width: '100%' }}
+            style={{ border: 'none', background: 'transparent', color: 'var(--text-primary)', outline: 'none', flex: 1, fontSize: '14px', width: '100%' }}
           />
         </div>
+        
+        <select 
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value)}
+          style={{ 
+            backgroundColor: 'var(--surface-color-elevated)', 
+            border: '1px solid var(--surface-border)', 
+            borderRadius: 'var(--radius-md)', 
+            padding: '8px', 
+            color: 'var(--text-primary)', 
+            fontSize: '14px',
+            outline: 'none',
+            maxWidth: '140px'
+          }}
+        >
+          <option value="All">All Categories</option>
+          {allCategories.map(c => (
+            <option key={c.name} value={c.name}>{c.name}</option>
+          ))}
+        </select>
       </div>
 
       {Object.keys(grouped).length === 0 ? (
