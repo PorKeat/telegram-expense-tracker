@@ -134,18 +134,18 @@ h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.2px; color: var(--tex
   background: var(--primary-color);
   color: var(--emerald-raw);
   border: none;
-  border-radius: var(--radius-md);
   padding: 18px var(--spacing-lg);
+  border-radius: var(--radius-md);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   width: 100%;
-  transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
-  box-shadow: 0 8px 24px var(--primary-glow);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-sm);
+  gap: 8px;
+  box-shadow: 0 8px 24px var(--primary-glow);
   outline: none;
 }
 
@@ -153,9 +153,9 @@ h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.2px; color: var(--tex
   color: var(--surface-solid);
 }
 
-.button:active { 
-  transform: scale(0.97); 
-  box-shadow: 0 4px 12px var(--primary-glow);
+.button:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 8px var(--primary-glow);
 }
 
 .button-secondary { 
@@ -304,16 +304,35 @@ input::placeholder { color: var(--text-tertiary); font-weight: 400; }
 .modal-overlay {
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: var(--bg-gradient);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
   z-index: 200;
   display: flex;
   flex-direction: column;
-  animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  justify-content: flex-end;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.bottom-sheet {
+  background: var(--bg-gradient);
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+  overflow: hidden;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(100%); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }
 
 /* Custom Lists */
@@ -323,10 +342,13 @@ input::placeholder { color: var(--text-tertiary); font-weight: 400; }
   align-items: center;
   padding: var(--spacing-md);
   border-bottom: 1px solid var(--surface-border);
-  transition: background 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .expense-item:last-child { border-bottom: none; }
-.expense-item:active { background: var(--surface-elevated); }
+.expense-item:active { 
+  background: var(--surface-elevated); 
+  transform: scale(0.98);
+}
 
 .expense-icon {
   width: 48px;

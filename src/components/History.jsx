@@ -1,17 +1,27 @@
 import { useState } from 'react';
-import { format, parseISO } from 'date-fns';
-import { Edit2, Trash2, Search } from 'lucide-react';
+import { format, parseISO, isToday, isYesterday, isThisWeek, isThisMonth } from 'date-fns';
+import { Edit2, Trash2, Search, Filter, X } from 'lucide-react';
 
 export default function History({ expenses, currency, exchangeRate, onEdit, onDelete, allCategories = [] }) {
   const [filterQuery, setFilterQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('All');
+  const [filterDateRange, setFilterDateRange] = useState('All');
+  const [showFilterSheet, setShowFilterSheet] = useState(false);
   
   // Filter expenses
   const filteredExpenses = expenses.filter(expense => {
     const matchesSearch = expense.item.toLowerCase().includes(filterQuery.toLowerCase()) || 
                           expense.category.toLowerCase().includes(filterQuery.toLowerCase());
     const matchesCategory = filterCategory === 'All' || expense.category === filterCategory;
-    return matchesSearch && matchesCategory;
+    
+    let matchesDate = true;
+    const dateObj = parseISO(expense.date);
+    if (filterDateRange === 'Today') matchesDate = isToday(dateObj);
+    else if (filterDateRange === 'Yesterday') matchesDate = isYesterday(dateObj);
+    else if (filterDateRange === 'This Week') matchesDate = isThisWeek(dateObj);
+    else if (filterDateRange === 'This Month') matchesDate = isThisMonth(dateObj);
+
+    return matchesSearch && matchesCategory && matchesDate;
   });
 
   // Sort expenses by date descending
@@ -34,41 +44,27 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
 
   return (
     <div className="app-content">
-      <div className="header" style={{ paddingTop: '20px', paddingBottom: '16px' }}>
+      <div className="header flex-row space-between" style={{ paddingTop: '20px', paddingBottom: '16px' }}>
         <h2>Expense History</h2>
-      </div>
-
-      <div style={{ marginBottom: '24px', padding: '0 4px', display: 'flex', gap: '8px' }}>
-        <div className="flex-row gap-sm" style={{ flex: 1, backgroundColor: 'var(--surface-color-elevated)', padding: '8px 12px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)' }}>
-          <Search size={16} color="var(--text-secondary)" />
-          <input 
-            type="text" 
-            placeholder="Search items..."
-            value={filterQuery}
-            onChange={(e) => setFilterQuery(e.target.value)}
-            style={{ border: 'none', background: 'transparent', color: 'var(--text-primary)', outline: 'none', flex: 1, fontSize: '14px', width: '100%' }}
-          />
-        </div>
-        
-        <select 
-          value={filterCategory}
-          onChange={(e) => setFilterCategory(e.target.value)}
+        <button 
+          onClick={() => setShowFilterSheet(true)}
           style={{ 
-            backgroundColor: 'var(--surface-color-elevated)', 
+            background: 'var(--surface-color-elevated)', 
             border: '1px solid var(--surface-border)', 
-            borderRadius: 'var(--radius-md)', 
-            padding: '8px', 
             color: 'var(--text-primary)', 
+            borderRadius: 'var(--radius-pill)', 
+            padding: '8px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
             fontSize: '14px',
-            outline: 'none',
-            maxWidth: '140px'
+            fontWeight: 500,
+            cursor: 'pointer'
           }}
         >
-          <option value="All">All Categories</option>
-          {allCategories.map(c => (
-            <option key={c.name} value={c.name}>{c.name}</option>
-          ))}
-        </select>
+          <Filter size={16} /> 
+          {(filterQuery || filterCategory !== 'All' || filterDateRange !== 'All') ? 'Filtered' : 'Filter'}
+        </button>
       </div>
 
       {Object.keys(grouped).length === 0 ? (
@@ -118,6 +114,109 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
             </div>
           )
         })
+      )}
+
+      {showFilterSheet && (
+        <div className="modal-overlay" onClick={() => setShowFilterSheet(false)}>
+          <div className="bottom-sheet" onClick={e => e.stopPropagation()} style={{ padding: '24px' }}>
+            <div className="flex-row space-between" style={{ marginBottom: '24px' }}>
+              <h2>Filter & Search</h2>
+              <button onClick={() => setShowFilterSheet(false)} style={{ background: 'none', border: 'none', color: 'var(--text-primary)' }}>
+                <X size={24} />
+              </button>
+            </div>
+
+            <div className="flex-col gap-lg" style={{ overflowY: 'auto' }}>
+              <div className="flex-col gap-sm">
+                <label className="text-secondary text-small">Search Items</label>
+                <div className="flex-row gap-sm" style={{ backgroundColor: 'var(--surface-color-elevated)', padding: '12px 16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)' }}>
+                  <Search size={20} color="var(--text-secondary)" />
+                  <input 
+                    type="text" 
+                    placeholder="Search by name..."
+                    value={filterQuery}
+                    onChange={(e) => setFilterQuery(e.target.value)}
+                    style={{ border: 'none', background: 'transparent', color: 'var(--text-primary)', outline: 'none', flex: 1, fontSize: '16px', width: '100%' }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex-col gap-sm">
+                <label className="text-secondary text-small">Date Range</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  {['All', 'Today', 'Yesterday', 'This Week', 'This Month'].map(range => (
+                    <button
+                      key={range}
+                      onClick={() => setFilterDateRange(range)}
+                      style={{
+                        padding: '8px 16px',
+                        borderRadius: 'var(--radius-pill)',
+                        border: filterDateRange === range ? '1px solid var(--primary-color)' : '1px solid var(--surface-border)',
+                        backgroundColor: filterDateRange === range ? 'var(--primary-glow)' : 'var(--surface-color-elevated)',
+                        color: filterDateRange === range ? 'var(--primary-color)' : 'var(--text-secondary)',
+                        fontSize: '14px',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      {range}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex-col gap-sm">
+                <label className="text-secondary text-small">Category</label>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                  <button
+                    onClick={() => setFilterCategory('All')}
+                    style={{
+                      padding: '8px 16px',
+                      borderRadius: 'var(--radius-pill)',
+                      border: filterCategory === 'All' ? '1px solid var(--primary-color)' : '1px solid var(--surface-border)',
+                      backgroundColor: filterCategory === 'All' ? 'var(--primary-glow)' : 'var(--surface-color-elevated)',
+                      color: filterCategory === 'All' ? 'var(--primary-color)' : 'var(--text-secondary)',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease'
+                    }}
+                  >
+                    All
+                  </button>
+                  {allCategories.map(c => (
+                    <button
+                      key={c.name}
+                      onClick={() => setFilterCategory(c.name)}
+                      style={{
+                        padding: '8px 16px',
+                        borderRadius: 'var(--radius-pill)',
+                        border: filterCategory === c.name ? '1px solid var(--primary-color)' : '1px solid var(--surface-border)',
+                        backgroundColor: filterCategory === c.name ? 'var(--primary-glow)' : 'var(--surface-color-elevated)',
+                        color: filterCategory === c.name ? 'var(--primary-color)' : 'var(--text-secondary)',
+                        fontSize: '14px',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      {c.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <button 
+              className="button" 
+              style={{ marginTop: '32px' }} 
+              onClick={() => setShowFilterSheet(false)}
+            >
+              Show {filteredExpenses.length} Results
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

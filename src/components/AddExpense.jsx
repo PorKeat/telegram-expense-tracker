@@ -36,17 +36,17 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
   // Removed hardcoded categories
 
   return (
-    <div className="modal-overlay">
-      <div className="header flex-row space-between" style={{ padding: '24px' }}>
-        <h2>{initialData ? 'Edit Expense' : 'Add Expense'}</h2>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer' }}>
-          <X size={28} />
-        </button>
-      </div>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="bottom-sheet" onClick={e => e.stopPropagation()} style={{ height: '100%', paddingBottom: '24px' }}>
+        <div className="header flex-row space-between" style={{ padding: '24px' }}>
+          <h2>{initialData ? 'Edit Expense' : 'Add Expense'}</h2>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer' }}>
+            <X size={28} />
+          </button>
+        </div>
 
-      <div className="app-content" style={{ paddingBottom: '24px' }}>
-        
-        <div className="glass-card flex-col gap-lg" style={{ marginBottom: '24px' }}>
+        <div className="app-content" style={{ paddingBottom: '24px', flex: 1, overflowY: 'auto' }}>
+          <div className="glass-card flex-col gap-lg" style={{ marginBottom: '24px' }}>
           {/* Main Total Display */}
           <div className="flex-col" style={{ alignItems: 'center', marginBottom: '8px' }}>
             <p className="text-secondary" style={{ textTransform: 'uppercase', letterSpacing: '1px', fontSize: '12px', fontWeight: 600 }}>Total Amount</p>
@@ -114,6 +114,7 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
         <button className="button" onClick={handleSave} style={{ padding: '20px' }}>
           <Check size={20} /> Save Expense
         </button>
+      </div>
       </div>
     </div>
   );

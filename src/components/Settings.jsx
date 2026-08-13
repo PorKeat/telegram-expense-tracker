@@ -475,9 +475,10 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
       </div>
 
       {pendingImport && (
-        <div className="modal-overlay" style={{ zIndex: 1000, backgroundColor: 'var(--bg-color)' }}>
-          <div className="header flex-row space-between" style={{ padding: '24px' }}>
-            <h2>Import Preview</h2>
+        <div className="modal-overlay" style={{ zIndex: 1000 }} onClick={() => setPendingImport(null)}>
+          <div className="bottom-sheet" style={{ height: '90vh' }} onClick={e => e.stopPropagation()}>
+            <div className="header flex-row space-between" style={{ padding: '24px' }}>
+              <h2>Import Preview</h2>
             <button onClick={() => setPendingImport(null)} style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer' }}>
               <X size={28} />
             </button>
@@ -625,6 +626,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
               >
                 Cancel
               </button>
+            </div>
             </div>
           </div>
         </div>

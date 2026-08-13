@@ -145,19 +145,19 @@ h3 {
 .button {
   background: var(--primary-color);
   color: var(--emerald-raw);
-  border-radius: var(--radius-md);
   padding: 18px var(--spacing-lg);
+  border-radius: var(--radius-md);
   cursor: pointer;
   width: 100%;
   box-shadow: 0 8px 24px var(--primary-glow);
-  justify-content: center;
-  align-items: center;
-  gap: var(--spacing-sm);
   border: none;
   outline: none;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
   font-size: 16px;
   font-weight: 600;
-  transition: all .2s cubic-bezier(.25, 1, .5, 1);
+  transition: all .2s cubic-bezier(.2, .8, .2, 1);
   display: flex;
 }
 
@@ -166,8 +166,8 @@ h3 {
 }
 
 .button:active {
-  box-shadow: 0 4px 12px var(--primary-glow);
-  transform: scale(.97);
+  box-shadow: 0 2px 8px var(--primary-glow);
+  transform: scale(.96);
 }
 
 .button-secondary {
@@ -344,23 +344,46 @@ input::placeholder {
 }
 
 .modal-overlay {
-  background: var(--bg-gradient);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
   z-index: 200;
+  background: #0009;
   flex-direction: column;
-  animation: .3s cubic-bezier(.2, .8, .2, 1) forwards slideUp;
+  justify-content: flex-end;
+  animation: .3s forwards fadeIn;
   display: flex;
   position: absolute;
   inset: 0;
 }
 
-@keyframes slideUp {
+.bottom-sheet {
+  background: var(--bg-gradient);
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  flex-direction: column;
+  max-height: 90vh;
+  animation: .4s cubic-bezier(.2, .8, .2, 1) forwards slideUp;
+  display: flex;
+  overflow: hidden;
+  box-shadow: 0 -10px 40px #0000004d;
+}
+
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(100%);
   }
 
   to {
     opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
     transform: translateY(0);
   }
 }
@@ -370,7 +393,7 @@ input::placeholder {
   border-bottom: 1px solid var(--surface-border);
   justify-content: space-between;
   align-items: center;
-  transition: background .2s;
+  transition: all .2s cubic-bezier(.2, .8, .2, 1);
   display: flex;
 }
 
@@ -380,6 +403,7 @@ input::placeholder {
 
 .expense-item:active {
   background: var(--surface-elevated);
+  transform: scale(.98);
 }
 
 .expense-icon {
