@@ -1,10 +1,18 @@
+import { useState } from 'react';
 import { format, parseISO } from 'date-fns';
-import { Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2, Search } from 'lucide-react';
 
 export default function History({ expenses, currency, exchangeRate, onEdit, onDelete, allCategories = [] }) {
+  const [filterQuery, setFilterQuery] = useState('');
   
+  // Filter expenses
+  const filteredExpenses = expenses.filter(expense => 
+    expense.item.toLowerCase().includes(filterQuery.toLowerCase()) ||
+    expense.category.toLowerCase().includes(filterQuery.toLowerCase())
+  );
+
   // Sort expenses by date descending
-  const sortedExpenses = [...expenses].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const sortedExpenses = [...filteredExpenses].sort((a, b) => new Date(b.date) - new Date(a.date));
 
   // Group by date
   const grouped = sortedExpenses.reduce((acc, expense) => {
@@ -23,8 +31,21 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
 
   return (
     <div className="app-content">
-      <div className="header" style={{ paddingTop: '20px' }}>
+      <div className="header" style={{ paddingTop: '20px', paddingBottom: '16px' }}>
         <h2>Expense History</h2>
+      </div>
+
+      <div style={{ marginBottom: '24px', padding: '0 4px' }}>
+        <div className="flex-row gap-sm" style={{ backgroundColor: 'var(--surface-color-elevated)', padding: '12px 16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)' }}>
+          <Search size={20} color="var(--text-secondary)" />
+          <input 
+            type="text" 
+            placeholder="Search by item or category..."
+            value={filterQuery}
+            onChange={(e) => setFilterQuery(e.target.value)}
+            style={{ border: 'none', background: 'transparent', color: 'var(--text-primary)', outline: 'none', flex: 1, fontSize: '16px', width: '100%' }}
+          />
+        </div>
       </div>
 
       {Object.keys(grouped).length === 0 ? (
