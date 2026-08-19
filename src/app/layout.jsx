@@ -4,6 +4,18 @@ import Script from 'next/script';
 export const metadata = {
   title: 'Spendly Telegram Mini App',
   description: 'Expense tracker for Telegram',
+  openGraph: {
+    title: 'Spendly Expense Tracker',
+    description: 'Track your expenses directly inside Telegram.',
+    images: ['/og-image.jpg'],
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Spendly Expense Tracker',
+    description: 'Track your expenses directly inside Telegram.',
+    images: ['/og-image.jpg'],
+  }
 };
 
 export default function RootLayout({ children }) {
