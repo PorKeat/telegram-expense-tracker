@@ -3,14 +3,14 @@ export default function SplashScreen({ isFadingOut }) {
     <div style={{
       position: 'fixed',
       top: 0, left: 0, right: 0, bottom: 0,
-      background: '#000000',
+      background: 'radial-gradient(circle at center, #0a2118 0%, #000000 80%)',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
       zIndex: 999999,
       opacity: isFadingOut ? 0 : 1,
-      transition: 'opacity 0.6s ease-in-out',
+      transition: 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
       pointerEvents: 'none'
     }}>
       <div style={{
