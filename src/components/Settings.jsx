@@ -613,11 +613,11 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
         </div>
 
         <button 
-          className="button button-primary flex-row space-between" 
+          className="button button-secondary flex-row" 
           onClick={handleExportPDF}
-          style={{ width: '100%', padding: '16px', borderRadius: 'var(--radius-md)', marginBottom: '12px', background: 'linear-gradient(135deg, var(--primary-color), var(--accent-color))', border: 'none', color: '#fff', boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)', cursor: 'pointer', transition: 'all 0.2s' }}
+          style={{ width: '100%', padding: '16px', borderRadius: 'var(--radius-md)', marginBottom: '12px', display: 'flex', justifyContent: 'center' }}
         >
-          <span style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 auto' }}>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <FileText size={20} /> Generate PDF Report
           </span>
         </button>
