@@ -3,7 +3,7 @@ import { Download, Trash2, DollarSign, Coins, Sun, Moon, Palette, Plus, X, Uploa
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 
-export default function Settings({ currency, setCurrency, customExchangeRate, setCustomExchangeRate, spendLimit, setSpendLimit, customCategories, setCustomCategories, theme, setTheme, expenses, onWipeData, onImportData, setDialogConfig }) {
+export default function Settings({ currency, setCurrency, customExchangeRate, setCustomExchangeRate, spendLimit, setSpendLimit, customCategories, setCustomCategories, theme, setTheme, expenses, onWipeData, onImportData, setDialogConfig, notificationSettings = { budget_alerts: true, report_frequency: 'weekly' }, setNotificationSettings }) {
   const [newCatName, setNewCatName] = useState('');
   const [newCatEmoji, setNewCatEmoji] = useState('🎮');
   const [pendingImport, setPendingImport] = useState(null);
@@ -382,6 +382,54 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
               style={{ padding: '8px', textAlign: 'right' }}
             />
           </div>
+        </div>
+      </div>
+
+      <h3 style={{ marginBottom: '16px' }}>Telegram Bot Alerts</h3>
+      <div className="glass-card flex-col gap-md" style={{ marginBottom: '32px' }}>
+        <div className="flex-row space-between" style={{ alignItems: 'center' }}>
+          <div className="flex-col">
+            <span style={{ fontWeight: 500 }}>Budget Overspend Warning</span>
+            <span className="text-small">Bot DM when limit exceeded</span>
+          </div>
+          <div 
+            onClick={() => {
+              if (setNotificationSettings) {
+                setNotificationSettings({ ...notificationSettings, budget_alerts: !notificationSettings.budget_alerts });
+              }
+            }}
+            style={{ 
+              width: '48px', height: '28px', borderRadius: '14px', 
+              background: notificationSettings.budget_alerts ? 'var(--primary-color)' : 'var(--surface-border)', 
+              position: 'relative', cursor: 'pointer', transition: 'background 0.3s'
+            }}
+          >
+            <div style={{ 
+              width: '24px', height: '24px', borderRadius: '50%', background: '#fff', 
+              position: 'absolute', top: '2px', left: notificationSettings.budget_alerts ? '22px' : '2px', 
+              transition: 'left 0.3s', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' 
+            }}></div>
+          </div>
+        </div>
+
+        <div className="flex-row space-between" style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border-color)', alignItems: 'center' }}>
+          <div className="flex-col">
+            <span style={{ fontWeight: 500 }}>Automated Reports</span>
+            <span className="text-small">Summary DM from the bot</span>
+          </div>
+          <select 
+            value={notificationSettings.report_frequency || 'weekly'}
+            onChange={e => {
+              if (setNotificationSettings) {
+                setNotificationSettings({ ...notificationSettings, report_frequency: e.target.value });
+              }
+            }}
+            style={{ width: '120px', padding: '8px' }}
+          >
+            <option value="off">Off</option>
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
         </div>
       </div>
 

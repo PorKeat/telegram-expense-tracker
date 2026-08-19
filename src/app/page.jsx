@@ -30,6 +30,7 @@ function App() {
   
   const [telegramUserId, setTelegramUserId] = useState('private');
   const [telegramChatId, setTelegramChatId] = useState('direct');
+  const [notificationSettings, setNotificationSettings] = useState({ budget_alerts: true, report_frequency: 'weekly' });
 
   const supabase = createClient();
 
@@ -86,6 +87,21 @@ function App() {
         if (data) {
           setExpenses(data);
         }
+
+        // Fetch user settings
+        const { data: settingsData } = await supabase
+          .from('user_settings')
+          .select('*')
+          .eq('telegram_chat_id', cid)
+          .single();
+        
+        if (settingsData) {
+          setNotificationSettings({
+            budget_alerts: settingsData.budget_alerts,
+            report_frequency: settingsData.report_frequency
+          });
+        }
+
         setIsInitialLoading(false);
       };
       
@@ -168,7 +184,7 @@ function App() {
         const message = `⚠️ Budget Warning! This expense brings your monthly total to ${currency}${(newTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2})}, exceeding your limit of ${currency}${(limit * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2})}.`;
         
         // Send a direct Telegram Bot Message if connected
-        if (telegramUserId !== 'private' && telegramUserId !== 'null') {
+        if (notificationSettings.budget_alerts && telegramUserId !== 'private' && telegramUserId !== 'null') {
           const formattedMessage = `🚨 <b>BUDGET EXCEEDED</b>\n━━━━━━━━━━━━━━━\n• <b>Item:</b> ${expense.item}\n• <b>Cost:</b> ${currency}${(expense.total * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2})}\n• <b>Current Total:</b> ${currency}${(newTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2})}\n• <b>Monthly Limit:</b> ${currency}${(limit * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2})}\n━━━━━━━━━━━━━━━\n⚠️ <i>You are ${currency}${((newTotal - limit) * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2})} over budget!</i>`;
           
           fetch('/api/notify', {
@@ -285,6 +301,17 @@ function App() {
     localStorage.removeItem(`${storageKey}_categories`);
   };
 
+  const handleUpdateNotificationSettings = async (newSettings) => {
+    setNotificationSettings(newSettings);
+    if (telegramChatId !== 'direct' && telegramChatId !== 'private') {
+      await supabase.from('user_settings').upsert({
+        telegram_chat_id: telegramChatId,
+        budget_alerts: newSettings.budget_alerts,
+        report_frequency: newSettings.report_frequency
+      });
+    }
+  };
+
   const renderContent = () => {
     if (isInitialLoading) {
       return <LoadingSkeleton />;
@@ -320,6 +347,8 @@ function App() {
                   onWipeData={handleWipeData} 
                   onImportData={handleImportData}
                   setDialogConfig={setDialogConfig}
+                  notificationSettings={notificationSettings}
+                  setNotificationSettings={handleUpdateNotificationSettings}
                />;
       default:
         return <Home expenses={expenses} currency={currency} exchangeRate={exchangeRate} spendLimit={spendLimit} allCategories={allCategories} />;
