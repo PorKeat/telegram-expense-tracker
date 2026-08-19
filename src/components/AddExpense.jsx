@@ -118,7 +118,7 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
               id="recurring" 
               checked={isRecurring}
               onChange={e => setIsRecurring(e.target.checked)}
-              style={{ width: '20px', height: '20px', accentColor: 'var(--primary-color)' }}
+              style={{ width: '24px', height: '24px', accentColor: 'var(--primary-color)', WebkitAppearance: 'auto', appearance: 'auto', margin: 0 }}
             />
             <label htmlFor="recurring" className="text-small" style={{ cursor: 'pointer', flex: 1, color: isRecurring ? 'var(--primary-color)' : 'var(--text-primary)' }}>
               Monthly Subscription
