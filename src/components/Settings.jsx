@@ -431,6 +431,44 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
             <option value="monthly">Monthly</option>
           </select>
         </div>
+
+        <button 
+          className="button-secondary"
+          onClick={async () => {
+            const initData = window.Telegram?.WebApp?.initDataUnsafe;
+            const cid = initData?.chat?.id || initData?.user?.id;
+            
+            if (!cid) {
+              setDialogConfig({ type: 'alert', message: 'Could not detect your Telegram ID. Are you opening this inside Telegram?', onConfirm: () => {} });
+              return;
+            }
+
+            setDialogConfig({ type: 'alert', message: 'Sending test message...', onConfirm: () => {} });
+            
+            try {
+              const res = await fetch('/api/notify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  chat_id: cid,
+                  text: '✅ <b>Test Successful!</b>\nYour Spendly bot is perfectly connected and ready to send you budget alerts.'
+                })
+              });
+              
+              const data = await res.json();
+              if (data.success) {
+                setDialogConfig({ type: 'alert', message: 'Success! Check your Telegram chat with the bot.', onConfirm: () => {} });
+              } else {
+                setDialogConfig({ type: 'alert', message: `Failed: ${data.error}. Did you add TELEGRAM_BOT_TOKEN to Vercel?`, onConfirm: () => {} });
+              }
+            } catch (e) {
+              setDialogConfig({ type: 'alert', message: 'Error connecting to server.', onConfirm: () => {} });
+            }
+          }}
+          style={{ marginTop: '8px', padding: '12px', borderRadius: 'var(--radius-md)', width: '100%', fontSize: '14px' }}
+        >
+          Test Bot Connection
+        </button>
       </div>
 
       <h3 style={{ marginBottom: '16px' }}>Custom Categories</h3>
