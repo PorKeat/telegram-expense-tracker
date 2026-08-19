@@ -623,9 +623,9 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
         </button>
 
         <button 
-          className="button-secondary flex-row space-between" 
+          className="button button-secondary flex-row" 
           onClick={handleWipeData}
-          style={{ width: '100%', padding: '16px', borderRadius: 'var(--radius-md)', background: 'rgba(255, 69, 58, 0.1)', border: '1px solid rgba(255, 69, 58, 0.3)', color: 'var(--danger-color)', boxShadow: 'none', cursor: 'pointer', transition: 'all 0.2s' }}
+          style={{ width: '100%', padding: '16px', borderRadius: 'var(--radius-md)', background: 'rgba(255, 69, 58, 0.1)', border: '1px solid rgba(255, 69, 58, 0.3)', color: 'var(--danger-color)', boxShadow: 'none', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', justifyContent: 'center', fontWeight: '600' }}
         >
           <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Trash2 size={20} /> Wipe All Data
