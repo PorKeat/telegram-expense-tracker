@@ -39,22 +39,22 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="bottom-sheet" onClick={e => e.stopPropagation()} style={{ height: '100%', paddingBottom: '24px' }}>
-        <div className="header flex-row space-between" style={{ padding: '24px' }}>
+      <div className="bottom-sheet" onClick={e => e.stopPropagation()} style={{ paddingBottom: '24px', maxHeight: '92vh' }}>
+        <div className="header flex-row space-between" style={{ padding: '20px 24px 12px 24px' }}>
           <h2>{initialData ? 'Edit Expense' : 'Add Expense'}</h2>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer' }}>
-            <X size={28} />
+            <X size={24} />
           </button>
         </div>
 
-        <div className="app-content" style={{ paddingBottom: '24px', flex: 1, overflowY: 'auto' }}>
-          <div className="glass-card flex-col gap-lg" style={{ marginBottom: '24px' }}>
+        <div className="app-content" style={{ padding: '0 24px 24px 24px', flex: '0 1 auto', overflowY: 'auto' }}>
+          <div className="glass-card flex-col gap-md" style={{ marginBottom: '16px', padding: '16px' }}>
           {/* Main Total Display */}
-          <div className="flex-col" style={{ alignItems: 'center', marginBottom: '8px' }}>
-            <p className="text-secondary" style={{ textTransform: 'uppercase', letterSpacing: '1px', fontSize: '12px', fontWeight: 600 }}>Total Amount</p>
-            <h1 style={{ fontSize: '56px', color: 'var(--primary-color)', fontWeight: 300, letterSpacing: '-2px' }}>{currency}{total.toLocaleString(undefined, currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0})}</h1>
+          <div className="flex-col" style={{ alignItems: 'center', marginBottom: '4px' }}>
+            <p className="text-secondary" style={{ textTransform: 'uppercase', letterSpacing: '1px', fontSize: '11px', fontWeight: 600 }}>Total Amount</p>
+            <h1 style={{ fontSize: '42px', color: 'var(--primary-color)', fontWeight: 300, letterSpacing: '-1px', margin: '4px 0' }}>{currency}{total.toLocaleString(undefined, currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0})}</h1>
             {quantity > 1 && (
-              <p className="text-small">{quantity} × {currency}{price || '0.00'}</p>
+              <p className="text-small" style={{ margin: 0 }}>{quantity} × {currency}{price || '0.00'}</p>
             )}
           </div>
 
