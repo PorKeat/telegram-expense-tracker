@@ -107,7 +107,7 @@ function App() {
 
         // Guarantee splash screen shows for a smooth duration, then trigger fade out
         const elapsedTime = Date.now() - startTime;
-        const minLoadingTime = 1200;
+        const minLoadingTime = 1800;
         
         const finishLoading = () => {
           setIsFadingOut(true);

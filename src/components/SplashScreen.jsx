@@ -3,17 +3,18 @@ export default function SplashScreen({ isFadingOut }) {
     <div style={{
       position: 'fixed',
       top: 0, left: 0, right: 0, bottom: 0,
-      background: 'var(--bg-color)',
+      background: '#000000',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      zIndex: 9999,
+      zIndex: 999999,
       opacity: isFadingOut ? 0 : 1,
-      transition: 'opacity 0.4s ease-out',
+      transition: 'opacity 0.6s ease-in-out',
+      pointerEvents: 'none'
     }}>
       <div style={{
-        animation: 'smoothEntry 1s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        animation: 'netflixZoom 3s cubic-bezier(0.1, 0.1, 0.25, 1) forwards',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -26,24 +27,24 @@ export default function SplashScreen({ isFadingOut }) {
             height: '120px',
             borderRadius: '28px',
             marginBottom: '24px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
           }}
         />
         <h1 style={{
-          fontSize: '32px',
+          fontSize: '34px',
           fontWeight: 800,
-          color: 'var(--text-primary)',
+          color: '#ffffff',
           margin: 0,
-          letterSpacing: '-0.5px'
+          letterSpacing: '0.5px'
         }}>
           Spendly
         </h1>
       </div>
 
       <style jsx>{`
-        @keyframes smoothEntry {
-          0% { transform: scale(0.85); opacity: 0; filter: blur(4px); }
-          100% { transform: scale(1); opacity: 1; filter: blur(0px); }
+        @keyframes netflixZoom {
+          0% { transform: scale(0.9); opacity: 0; }
+          15% { opacity: 1; }
+          100% { transform: scale(1.1); opacity: 1; }
         }
       `}</style>
     </div>
