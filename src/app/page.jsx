@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { isThisMonth, parseISO } from 'date-fns';
-import { createClient } from '../utils/supabase/client';
+
 
 // Components
 import Home from '../components/Home';
@@ -33,7 +33,7 @@ function App() {
   const [telegramChatId, setTelegramChatId] = useState('direct');
   const [notificationSettings, setNotificationSettings] = useState({ budget_alerts: true, report_frequency: 'weekly' });
 
-  const supabase = createClient();
+  const [initData, setInitData] = useState('');
 
   const defaultCategories = [
     { name: 'Food & Drink', icon: '☕' },
@@ -54,8 +54,13 @@ function App() {
       let cid = 'direct';
 
       if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
+
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
+        
+        const iData = window.Telegram.WebApp.initData || '';
+        setInitData(iData);
+
 
         try {
           if (window.Telegram.WebApp.requestWriteAccess && !localStorage.getItem('telegram_write_access_requested')) {
@@ -78,40 +83,41 @@ function App() {
       setStorageKey(dynamicKey);
 
 
-      const fetchExpenses = async () => {
+const fetchExpenses = async (currentInitData) => {
         const startTime = Date.now();
         
         // 1. Instantly load cached offline expenses
         const cached = localStorage.getItem(`${dynamicKey}_cached_expenses`);
         if (cached) {
-          try { setExpenses(JSON.parse(cached)); } catch(e) {}
+          try { setExpenses(JSON.parse(cached)); } catch(_e) {}
         }
 
-        // 2. Fetch from Supabase
-        const { data } = await supabase
-
-          .from('expenses')
-          .select('*')
-          .eq('telegram_user_id', uid)
-          .eq('telegram_chat_id', cid)
-          .order('date', { ascending: false });
-        
-        if (data) {
-          setExpenses(data);
-        }
-
-        // Fetch user settings
-        const { data: settingsData } = await supabase
-          .from('user_settings')
-          .select('*')
-          .eq('telegram_chat_id', cid)
-          .single();
-        
-        if (settingsData) {
-          setNotificationSettings({
-            budget_alerts: settingsData.budget_alerts,
-            report_frequency: settingsData.report_frequency
-          });
+        // 2. Fetch from secure API
+        if (currentInitData) {
+          try {
+            const res = await fetch('/api/expenses', {
+              headers: { 'Authorization': `Bearer ${currentInitData}` }
+            });
+            if (res.ok) {
+              const { data } = await res.json();
+              if (data) setExpenses(data);
+            }
+            
+            const settingsRes = await fetch(`/api/settings?chat_id=${cid}`, {
+              headers: { 'Authorization': `Bearer ${currentInitData}` }
+            });
+            if (settingsRes.ok) {
+              const { data: settingsData } = await settingsRes.json();
+              if (settingsData) {
+                setNotificationSettings({
+                  budget_alerts: settingsData.budget_alerts,
+                  report_frequency: settingsData.report_frequency
+                });
+              }
+            }
+          } catch (_err) {
+            console.error("Fetch failed (offline or error)");
+          }
         }
 
         // Guarantee splash screen shows for a smooth duration, then trigger fade out
@@ -130,7 +136,7 @@ function App() {
         }
       };
       
-      fetchExpenses();
+      fetchExpenses(window.Telegram?.WebApp?.initData || '');
 
       const savedCurrency = localStorage.getItem('spendly_currency');
       if (savedCurrency) setCurrency(savedCurrency);
@@ -254,18 +260,23 @@ function App() {
       delete newExpense.id;
     }
 
-    try {
+try {
       if (!navigator.onLine) throw new Error("Offline");
 
-      const { data } = await supabase
-        .from('expenses')
-        .insert([newExpense])
-        .select();
-
+      const res = await fetch('/api/expenses', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${initData}`
+        },
+        body: JSON.stringify(newExpense)
+      });
+      
+      if (!res.ok) throw new Error("Failed to save to cloud");
+      
+      const { data } = await res.json();
       if (data && data.length > 0) {
         setExpenses([data[0], ...expenses]);
-      } else if (error) {
-        throw error;
       }
     } catch (_err) {
       console.log("Saving offline...");
@@ -279,26 +290,44 @@ function App() {
     setShowAddModal(false);
   };
 
-  const handleUpdateExpense = async (updatedExpense) => {
+const handleUpdateExpense = async (updatedExpense) => {
     const { id, ...updates } = updatedExpense;
-    const { data } = await supabase
-      .from('expenses')
-      .update(updates)
-      .eq('id', id)
-      .select();
-
-    if (data && data.length > 0) {
-      setExpenses(expenses.map(e => e.id === id ? data[0] : e));
+    try {
+      const res = await fetch('/api/expenses', {
+        method: 'PUT',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${initData}`
+        },
+        body: JSON.stringify(updatedExpense) // send full object with ID
+      });
+      if (res.ok) {
+        const { data } = await res.json();
+        if (data && data.length > 0) {
+          setExpenses(expenses.map(e => e.id === id ? data[0] : e));
+        }
+      }
+    } catch (err) {
+      console.error(err);
     }
     setEditingExpense(null);
   };
 
-  const handleDeleteExpense = async (id) => {
-    await supabase.from('expenses').delete().eq('id', id);
-    setExpenses(expenses.filter(e => e.id !== id));
+const handleDeleteExpense = async (id) => {
+    try {
+      const res = await fetch(`/api/expenses?id=${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${initData}` }
+      });
+      if (res.ok) {
+        setExpenses(expenses.filter(e => e.id !== id));
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleImportData = async (newExpenses) => {
+const handleImportData = async (newExpenses) => {
     try {
       const imports = newExpenses.map(exp => {
         const newExp = {
@@ -310,58 +339,77 @@ function App() {
         return newExp;
       });
 
-      const { data } = await supabase
-        .from('expenses')
-        .insert(imports)
-        .select();
+      const res = await fetch('/api/expenses', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${initData}`
+        },
+        body: JSON.stringify(imports)
+      });
 
-      if (error) {
-        console.error('Supabase import error:', error);
-        setDialogConfig({ type: 'alert', message: `Import failed: ${error.message}`, onConfirm: () => {} });
+      if (!res.ok) {
+        const err = await res.json();
+        setDialogConfig({ type: 'alert', message: `Import failed: ${err.error}`, onConfirm: () => {} });
         return false;
       }
 
+      const { data } = await res.json();
       if (data) {
         setExpenses([...data, ...expenses]);
         return true;
       }
-    } catch (_err) {
+    } catch (err) {
       console.error('Import exception:', err);
-      setDialogConfig({ type: 'alert', message: `Import error: ${err.message}`, onConfirm: () => {} });
       return false;
     }
   };
 
-  const handleWipeData = async () => {
-    await supabase.from('expenses')
-      .delete()
-      .eq('telegram_user_id', telegramUserId)
-      .eq('telegram_chat_id', telegramChatId);
-      
-    setExpenses([]);
-    setSpendLimit('');
-    setCustomCategories([]);
-    localStorage.removeItem(`${storageKey}_limit`);
-    localStorage.removeItem(`${storageKey}_categories`);
+const handleWipeData = async () => {
+    try {
+      const res = await fetch('/api/wipe', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${initData}` }
+      });
+      if (res.ok) {
+        setExpenses([]);
+        setSpendLimit('');
+        setCustomCategories([]);
+        localStorage.removeItem(`${storageKey}_limit`);
+        localStorage.removeItem(`${storageKey}_categories`);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const handleUpdateNotificationSettings = async (newSettings) => {
+const handleUpdateNotificationSettings = async (newSettings) => {
     setNotificationSettings(newSettings);
     if (telegramChatId !== 'direct' && telegramChatId !== 'private') {
-      await supabase.from('user_settings').upsert({
-        telegram_chat_id: telegramChatId,
-        budget_alerts: newSettings.budget_alerts,
-        report_frequency: newSettings.report_frequency
-      });
+      try {
+        await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${initData}`
+          },
+          body: JSON.stringify({
+            chat_id: telegramChatId,
+            ...newSettings
+          })
+        });
+      } catch (err) {
+        console.error(err);
+      }
     }
   };
 
 
-  // Offline Sync Queue Listener
+// Offline Sync Queue Listener
   useEffect(() => {
     const syncOffline = async () => {
       const offlineItems = expenses.filter(e => e.is_offline);
-      if (offlineItems.length === 0) return;
+      if (offlineItems.length === 0 || !initData) return;
 
       console.log("Syncing offline items...", offlineItems);
       const itemsToSync = offlineItems.map(item => {
@@ -369,20 +417,34 @@ function App() {
         return rest;
       });
 
-      const { data } = await supabase.from('expenses').insert(itemsToSync).select();
-      
-      if (data) {
-        // Replace offline items with synced items from DB
-        setExpenses(prev => {
-          const onlineItems = prev.filter(e => !e.is_offline);
-          return [...data, ...onlineItems].sort((a, b) => new Date(b.date) - new Date(a.date));
+      try {
+        const res = await fetch('/api/expenses', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${initData}`
+          },
+          body: JSON.stringify(itemsToSync)
         });
+        
+        if (res.ok) {
+          const { data } = await res.json();
+          if (data) {
+            // Replace offline items with synced items from DB
+            setExpenses(prev => {
+              const onlineItems = prev.filter(e => !e.is_offline);
+              return [...data, ...onlineItems].sort((a, b) => new Date(b.date) - new Date(a.date));
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Sync failed", err);
       }
     };
 
     window.addEventListener('online', syncOffline);
     return () => window.removeEventListener('online', syncOffline);
-  }, [expenses, supabase]);
+  }, [expenses, initData]);
 
   const renderContent = () => {
 
