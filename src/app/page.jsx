@@ -88,7 +88,7 @@ function App() {
         }
 
         // 2. Fetch from Supabase
-        const { data, error } = await supabase
+        const { data } = await supabase
 
           .from('expenses')
           .select('*')
@@ -159,7 +159,7 @@ function App() {
     // Small delay to ensure Telegram SDK has fully parsed the URL hash
     const timer = setTimeout(initializeApp, 150);
     return () => clearTimeout(timer);
-  }, []);
+  }, [supabase]);
 
   // Sync state to DOM and localStorage
   // Expenses are synced to Supabase directly, so we no longer save them to localStorage here.
@@ -257,7 +257,7 @@ function App() {
     try {
       if (!navigator.onLine) throw new Error("Offline");
 
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('expenses')
         .insert([newExpense])
         .select();
@@ -267,7 +267,7 @@ function App() {
       } else if (error) {
         throw error;
       }
-    } catch (err) {
+    } catch (_err) {
       console.log("Saving offline...");
       newExpense.id = Date.now(); // Temp offline ID
       newExpense.is_offline = true;
@@ -281,7 +281,7 @@ function App() {
 
   const handleUpdateExpense = async (updatedExpense) => {
     const { id, ...updates } = updatedExpense;
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('expenses')
       .update(updates)
       .eq('id', id)
@@ -310,7 +310,7 @@ function App() {
         return newExp;
       });
 
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('expenses')
         .insert(imports)
         .select();
@@ -325,7 +325,7 @@ function App() {
         setExpenses([...data, ...expenses]);
         return true;
       }
-    } catch (err) {
+    } catch (_err) {
       console.error('Import exception:', err);
       setDialogConfig({ type: 'alert', message: `Import error: ${err.message}`, onConfirm: () => {} });
       return false;
@@ -365,11 +365,11 @@ function App() {
 
       console.log("Syncing offline items...", offlineItems);
       const itemsToSync = offlineItems.map(item => {
-        const { id, is_offline, ...rest } = item; // Remove temp ID and flag
+        const { id: _id, is_offline: _is_offline, ...rest } = item; // Remove temp ID and flag
         return rest;
       });
 
-      const { data, error } = await supabase.from('expenses').insert(itemsToSync).select();
+      const { data } = await supabase.from('expenses').insert(itemsToSync).select();
       
       if (data) {
         // Replace offline items with synced items from DB
@@ -382,7 +382,7 @@ function App() {
 
     window.addEventListener('online', syncOffline);
     return () => window.removeEventListener('online', syncOffline);
-  }, [expenses]);
+  }, [expenses, supabase]);
 
   const renderContent = () => {
 

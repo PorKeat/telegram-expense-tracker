@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Download, Trash2, DollarSign, Coins, Sun, Moon, Palette, Plus, X, Upload, Check, FileText } from 'lucide-react';
+import { Download, Trash2, DollarSign, Coins, Sun, Moon, Plus, X, Upload, Check, FileText } from 'lucide-react';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
@@ -179,7 +179,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
              let isData = false;
              let val = 0;
              if (typeof col1 === 'number') { isData = true; val = col1; }
-             else if (typeof col1 === 'string' && col1.match(/^[\d,\.]+$/)) {
+             else if (typeof col1 === 'string' && col1.match(/^[\d,.]+$/)) {
                val = parseFloat(col1.replace(/,/g, ''));
                if (!isNaN(val)) isData = true;
              }
@@ -524,7 +524,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
               } else {
                 setDialogConfig({ type: 'alert', message: `Failed: ${data.error}. Did you add TELEGRAM_BOT_TOKEN to Vercel?`, onConfirm: () => {} });
               }
-            } catch (e) {
+            } catch (_e) {
               setDialogConfig({ type: 'alert', message: 'Error connecting to server.', onConfirm: () => {} });
             }
           }}
