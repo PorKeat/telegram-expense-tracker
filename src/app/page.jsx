@@ -373,6 +373,8 @@ function App() {
 
   return (
     <>
+      {isInitialLoading && <SplashScreen isFadingOut={isFadingOut} />}
+      
       <div key={activeTab} className="page-transition">
         {renderContent()}
       </div>
