@@ -208,13 +208,8 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
               </div>
             </div>
 
-            <button 
-              className="button" 
-              style={{ marginTop: '32px' }} 
-              onClick={() => setShowFilterSheet(false)}
-            >
-              Show {filteredExpenses.length} Results
-            </button>
+            {/* Spacer to prevent bottom nav from covering content */}
+            <div style={{ height: '80px' }} />
           </div>
         </div>
       )}
