@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { format, parseISO, isToday, isYesterday, isThisWeek, isThisMonth } from 'date-fns';
 import { Edit2, Trash2, Search, Filter, X } from 'lucide-react';
 
@@ -116,7 +117,7 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
         })
       )}
 
-      {showFilterSheet && (
+      {showFilterSheet && typeof document !== 'undefined' && createPortal(
         <div className="modal-overlay" onClick={() => setShowFilterSheet(false)}>
           <div className="bottom-sheet" onClick={e => e.stopPropagation()} style={{ padding: '24px' }}>
             <div className="flex-row space-between" style={{ marginBottom: '24px' }}>
@@ -126,7 +127,7 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
               </button>
             </div>
 
-            <div className="flex-col gap-lg" style={{ overflowY: 'auto' }}>
+            <div className="flex-col gap-lg" style={{ overflowY: 'auto', paddingBottom: '16px' }}>
               <div className="flex-col gap-sm">
                 <label className="text-secondary text-small">Search Items</label>
                 <div className="flex-row gap-sm" style={{ background: 'var(--surface-elevated)', padding: '12px 16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)', boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.1)' }}>
@@ -207,12 +208,9 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
                 </div>
               </div>
             </div>
-
-            {/* Spacer to prevent bottom nav from covering content */}
-            <div style={{ height: '80px' }} />
           </div>
         </div>
-      )}
+      , document.body)}
     </div>
   );
 }
