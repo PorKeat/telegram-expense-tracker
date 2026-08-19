@@ -47,7 +47,6 @@ export default function BottomNav({ activeTab, setActiveTab, onAddClick, hideAdd
         </div>
 
         {/* Floating Center Button */}
-        {!hideAdd && (
           <button 
             className="fab" 
             onClick={onAddClick}
@@ -65,7 +64,6 @@ export default function BottomNav({ activeTab, setActiveTab, onAddClick, hideAdd
           >
             <Plus size={32} strokeWidth={2.5} />
           </button>
-        )}
       </nav>
     </div>
   );
