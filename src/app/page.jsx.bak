@@ -77,19 +77,10 @@ function App() {
       setTelegramChatId(cid);
       setStorageKey(dynamicKey);
 
-
       const fetchExpenses = async () => {
         const startTime = Date.now();
         
-        // 1. Instantly load cached offline expenses
-        const cached = localStorage.getItem(`${dynamicKey}_cached_expenses`);
-        if (cached) {
-          try { setExpenses(JSON.parse(cached)); } catch(e) {}
-        }
-
-        // 2. Fetch from Supabase
         const { data, error } = await supabase
-
           .from('expenses')
           .select('*')
           .eq('telegram_user_id', uid)
@@ -164,16 +155,8 @@ function App() {
   // Sync state to DOM and localStorage
   // Expenses are synced to Supabase directly, so we no longer save them to localStorage here.
 
-
-  useEffect(() => {
-    if (expenses.length > 0 && storageKey) {
-      localStorage.setItem(`${storageKey}_cached_expenses`, JSON.stringify(expenses));
-    }
-  }, [expenses, storageKey]);
-
   useEffect(() => {
     localStorage.setItem('spendly_currency', currency);
-
   }, [currency]);
 
   useEffect(() => {
@@ -248,33 +231,22 @@ function App() {
       telegram_chat_id: telegramChatId
     };
     
-
     // Let Supabase generate the ID if it's a new UUID table
     if (typeof newExpense.id === 'number') {
       delete newExpense.id;
     }
 
-    try {
-      if (!navigator.onLine) throw new Error("Offline");
+    const { data, error } = await supabase
+      .from('expenses')
+      .insert([newExpense])
+      .select();
 
-      const { data, error } = await supabase
-        .from('expenses')
-        .insert([newExpense])
-        .select();
-
-      if (data && data.length > 0) {
-        setExpenses([data[0], ...expenses]);
-      } else if (error) {
-        throw error;
-      }
-    } catch (err) {
-      console.log("Saving offline...");
-      newExpense.id = Date.now(); // Temp offline ID
-      newExpense.is_offline = true;
-      setExpenses([newExpense, ...expenses]);
-      setDialogConfig({ type: 'alert', message: "You are offline. Expense saved locally and will sync when you reconnect.", onConfirm: () => {} });
+    if (data && data.length > 0) {
+      setExpenses([data[0], ...expenses]);
+    } else if (error) {
+      console.error(error);
+      setDialogConfig({ type: 'alert', message: "Failed to save to cloud", onConfirm: () => {} });
     }
-
     
     setShowAddModal(false);
   };
@@ -356,36 +328,7 @@ function App() {
     }
   };
 
-
-  // Offline Sync Queue Listener
-  useEffect(() => {
-    const syncOffline = async () => {
-      const offlineItems = expenses.filter(e => e.is_offline);
-      if (offlineItems.length === 0) return;
-
-      console.log("Syncing offline items...", offlineItems);
-      const itemsToSync = offlineItems.map(item => {
-        const { id, is_offline, ...rest } = item; // Remove temp ID and flag
-        return rest;
-      });
-
-      const { data, error } = await supabase.from('expenses').insert(itemsToSync).select();
-      
-      if (data) {
-        // Replace offline items with synced items from DB
-        setExpenses(prev => {
-          const onlineItems = prev.filter(e => !e.is_offline);
-          return [...data, ...onlineItems].sort((a, b) => new Date(b.date) - new Date(a.date));
-        });
-      }
-    };
-
-    window.addEventListener('online', syncOffline);
-    return () => window.removeEventListener('online', syncOffline);
-  }, [expenses]);
-
   const renderContent = () => {
-
     if (isInitialLoading) {
       return <SplashScreen isFadingOut={isFadingOut} />;
     }
