@@ -107,11 +107,11 @@ function App() {
 
         // Guarantee splash screen shows for a smooth duration, then trigger fade out
         const elapsedTime = Date.now() - startTime;
-        const minLoadingTime = 1800;
+        const minLoadingTime = 900;
         
         const finishLoading = () => {
           setIsFadingOut(true);
-          setTimeout(() => setIsInitialLoading(false), 400); // Wait for fade out animation
+          setTimeout(() => setIsInitialLoading(false), 300); // Wait for fade out animation
         };
 
         if (elapsedTime < minLoadingTime) {

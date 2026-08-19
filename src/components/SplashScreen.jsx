@@ -10,11 +10,11 @@ export default function SplashScreen({ isFadingOut }) {
       alignItems: 'center',
       zIndex: 999999,
       opacity: isFadingOut ? 0 : 1,
-      transition: 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+      transition: 'opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       pointerEvents: 'none'
     }}>
       <div style={{
-        animation: 'netflixZoom 3s cubic-bezier(0.1, 0.1, 0.25, 1) forwards',
+        animation: 'netflixZoom 1.5s cubic-bezier(0.1, 0.1, 0.25, 1) forwards',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
