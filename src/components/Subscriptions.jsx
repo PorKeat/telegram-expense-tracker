@@ -128,15 +128,15 @@ export default function Subscriptions({ initData, currency, exchangeRate, catego
   };
 
   return (
-    <div className="section animate-fade-in" style={{ paddingBottom: '100px' }}>
-      <div className="flex-row space-between" style={{ marginBottom: '24px' }}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <button className="icon-btn" onClick={onBack} style={{ background: 'var(--card-bg)' }}>
-            <X size={20} />
+    <div className="app-content animate-fade-in">
+      <div className="header flex-row space-between" style={{ paddingTop: '20px', paddingBottom: '20px', alignItems: 'center' }}>
+        <div className="flex-row gap-sm" style={{ alignItems: 'center' }}>
+          <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            <X size={24} />
           </button>
-          Smart Subscriptions
-        </h2>
-        <button className="button button-primary" onClick={() => openForm()} style={{ padding: '8px 16px', borderRadius: '100px', fontSize: '14px' }}>
+          <h2 style={{ margin: 0, fontSize: '22px' }}>Subscriptions</h2>
+        </div>
+        <button className="button flex-row gap-xs" onClick={() => openForm()} style={{ padding: '8px 16px', borderRadius: '100px', fontSize: '14px' }}>
           <Plus size={16} /> Add
         </button>
       </div>
