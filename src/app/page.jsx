@@ -167,7 +167,7 @@ const fetchExpenses = async (currentInitData) => {
     // Small delay to ensure Telegram SDK has fully parsed the URL hash
     const timer = setTimeout(initializeApp, 150);
     return () => clearTimeout(timer);
-  }, [supabase]);
+  }, []);
 
   // Sync state to DOM and localStorage
   // Expenses are synced to Supabase directly, so we no longer save them to localStorage here.
