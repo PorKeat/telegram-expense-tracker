@@ -417,19 +417,37 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
             <span style={{ fontWeight: 500 }}>Automated Reports</span>
             <span className="text-small">Summary DM from the bot</span>
           </div>
-          <select 
-            value={notificationSettings.report_frequency || 'weekly'}
-            onChange={e => {
-              if (setNotificationSettings) {
-                setNotificationSettings({ ...notificationSettings, report_frequency: e.target.value });
-              }
-            }}
-            style={{ width: '120px', padding: '8px' }}
-          >
-            <option value="off">Off</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-          </select>
+          <div style={{ position: 'relative' }}>
+            <select 
+              value={notificationSettings.report_frequency || 'weekly'}
+              onChange={e => {
+                if (setNotificationSettings) {
+                  setNotificationSettings({ ...notificationSettings, report_frequency: e.target.value });
+                }
+              }}
+              style={{ 
+                width: '120px', 
+                padding: '8px 32px 8px 16px', 
+                appearance: 'none', 
+                WebkitAppearance: 'none',
+                background: 'var(--surface-color-elevated)',
+                border: '1px solid var(--surface-border)',
+                borderRadius: '16px',
+                color: 'var(--text-primary)',
+                fontSize: '14px',
+                cursor: 'pointer',
+                outline: 'none',
+                boxShadow: 'inset 0 1px 2px rgba(255,255,255,0.05)'
+              }}
+            >
+              <option value="off">Off</option>
+              <option value="weekly">Weekly</option>
+              <option value="monthly">Monthly</option>
+            </select>
+            <div style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
         </div>
 
         <button 
