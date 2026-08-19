@@ -1,7 +1,9 @@
 import { useState, useRef } from 'react';
-import { Download, Trash2, DollarSign, Coins, Sun, Moon, Palette, Plus, X, Upload, Check } from 'lucide-react';
+import { Download, Trash2, DollarSign, Coins, Sun, Moon, Palette, Plus, X, Upload, Check, FileText } from 'lucide-react';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 
 export default function Settings({ currency, setCurrency, customExchangeRate, setCustomExchangeRate, spendLimit, setSpendLimit, customCategories, setCustomCategories, theme, setTheme, expenses, onWipeData, onImportData, setDialogConfig, notificationSettings = { budget_alerts: true, report_frequency: 'weekly' }, setNotificationSettings }) {
   const [newCatName, setNewCatName] = useState('');
@@ -234,6 +236,49 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+  };
+
+  const handleExportPDF = () => {
+    if (expenses.length === 0) return setDialogConfig({ type: 'alert', message: 'No data to export.', onConfirm: () => {} });
+    
+    const doc = new jsPDF();
+    
+    // Add Header
+    doc.setFontSize(22);
+    doc.setTextColor(16, 185, 129); // Emerald Green
+    doc.text("Spendly", 14, 20);
+    
+    doc.setFontSize(14);
+    doc.setTextColor(100, 100, 100);
+    doc.text("Expense Statement", 14, 28);
+    
+    const totalSpent = expenses.reduce((sum, exp) => sum + Number(exp.total), 0);
+    doc.setFontSize(12);
+    doc.setTextColor(50, 50, 50);
+    doc.text(`Total Expenses: ${currency}${totalSpent.toLocaleString(undefined, {minimumFractionDigits: 2})}`, 14, 38);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 44);
+
+    // Prepare Table Data
+    const tableData = expenses.map(exp => [
+      new Date(exp.date).toLocaleDateString(),
+      exp.item,
+      exp.category,
+      exp.quantity,
+      `${currency}${Number(exp.price).toLocaleString(undefined, {minimumFractionDigits: 2})}`,
+      `${currency}${Number(exp.total).toLocaleString(undefined, {minimumFractionDigits: 2})}`
+    ]);
+
+    doc.autoTable({
+      startY: 50,
+      head: [['Date', 'Item', 'Category', 'Qty', 'Unit Price', 'Total']],
+      body: tableData,
+      theme: 'striped',
+      headStyles: { fillColor: [16, 185, 129] }, // Emerald Green Header
+      styles: { fontSize: 10, cellPadding: 4 },
+      alternateRowStyles: { fillColor: [245, 248, 246] }
+    });
+
+    doc.save('Spendly_Statement.pdf');
   };
 
   const handleWipeData = () => {
@@ -545,7 +590,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
           style={{ display: 'none' }} 
         />
 
-        <div className="flex-row gap-sm">
+        <div className="flex-row gap-sm" style={{ marginBottom: '12px' }}>
           <button 
             className="button button-secondary flex-row" 
             onClick={() => fileInputRef.current?.click()}
@@ -566,6 +611,16 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
             </span>
           </button>
         </div>
+
+        <button 
+          className="button button-primary flex-row space-between" 
+          onClick={handleExportPDF}
+          style={{ width: '100%', padding: '16px', borderRadius: 'var(--radius-md)', marginBottom: '12px', background: 'linear-gradient(135deg, var(--primary-color), var(--accent-color))', border: 'none', color: '#fff', boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)', cursor: 'pointer', transition: 'all 0.2s' }}
+        >
+          <span style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '0 auto' }}>
+            <FileText size={20} /> Generate PDF Report
+          </span>
+        </button>
 
         <button 
           className="button-secondary flex-row space-between" 
