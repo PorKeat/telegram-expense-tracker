@@ -46,64 +46,71 @@ function App() {
 
   // Load from Supabase on mount and initialize Telegram
   useEffect(() => {
-    let dynamicKey = 'spendly_expenses';
-    let uid = 'private';
-    let cid = 'direct';
+    const initializeApp = () => {
+      let dynamicKey = 'spendly_expenses';
+      let uid = 'private';
+      let cid = 'direct';
 
-    if (window.Telegram?.WebApp) {
-      window.Telegram.WebApp.ready();
-      window.Telegram.WebApp.expand();
+      if (typeof window !== 'undefined' && window.Telegram?.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
 
-      const initData = window.Telegram.WebApp.initDataUnsafe || {};
-      if (initData.user?.id) uid = initData.user.id.toString();
-      if (initData.chat?.id) cid = initData.chat.id.toString();
+        const initData = window.Telegram.WebApp.initDataUnsafe || {};
+        if (initData.user?.id) uid = initData.user.id.toString();
+        if (initData.chat?.id) cid = initData.chat.id.toString();
 
-      if (uid !== 'private' || cid !== 'direct') {
-        dynamicKey = `spendly_expenses_${uid}_${cid}`;
+        if (uid !== 'private' || cid !== 'direct') {
+          dynamicKey = `spendly_expenses_${uid}_${cid}`;
+        }
       }
-    }
-    
-    setTelegramUserId(uid);
-    setTelegramChatId(cid);
-    setStorageKey(dynamicKey);
-
-    const fetchExpenses = async () => {
-      const { data, error } = await supabase
-        .from('expenses')
-        .select('*')
-        .eq('telegram_user_id', uid)
-        .eq('telegram_chat_id', cid)
-        .order('date', { ascending: false });
       
-      if (data) {
-        setExpenses(data);
+      setTelegramUserId(uid);
+      setTelegramChatId(cid);
+      setStorageKey(dynamicKey);
+
+      const fetchExpenses = async () => {
+        const { data, error } = await supabase
+          .from('expenses')
+          .select('*')
+          .eq('telegram_user_id', uid)
+          .eq('telegram_chat_id', cid)
+          .order('date', { ascending: false });
+        
+        if (data) {
+          setExpenses(data);
+        }
+        setIsInitialLoading(false);
+      };
+      
+      fetchExpenses();
+
+      const savedCurrency = localStorage.getItem('spendly_currency');
+      if (savedCurrency) setCurrency(savedCurrency);
+
+      const savedTheme = localStorage.getItem('spendly_theme');
+      if (savedTheme) setTheme(savedTheme);
+
+      const savedRate = localStorage.getItem('spendly_exchange_rate');
+      if (savedRate) setCustomExchangeRate(parseFloat(savedRate));
+
+      const savedLimit = localStorage.getItem(`${dynamicKey}_limit`);
+      if (savedLimit) setSpendLimit(savedLimit);
+
+      const savedCats = localStorage.getItem(`${dynamicKey}_categories`);
+      if (savedCats) {
+        try {
+          setCustomCategories(JSON.parse(savedCats));
+        } catch(e) {}
       }
-      setIsInitialLoading(false);
+
+      // Cleanup legacy inline styles from previous versions
+      document.documentElement.style.removeProperty('--primary-color');
+      document.documentElement.style.removeProperty('--primary-glow');
     };
-    fetchExpenses();
 
-    const savedCurrency = localStorage.getItem('spendly_currency');
-    if (savedCurrency) setCurrency(savedCurrency);
-
-    const savedTheme = localStorage.getItem('spendly_theme');
-    if (savedTheme) setTheme(savedTheme);
-
-    const savedRate = localStorage.getItem('spendly_exchange_rate');
-    if (savedRate) setCustomExchangeRate(parseFloat(savedRate));
-
-    const savedLimit = localStorage.getItem(`${dynamicKey}_limit`);
-    if (savedLimit) setSpendLimit(savedLimit);
-
-    const savedCats = localStorage.getItem(`${dynamicKey}_categories`);
-    if (savedCats) {
-      try {
-        setCustomCategories(JSON.parse(savedCats));
-      } catch(e) {}
-    }
-
-    // Cleanup legacy inline styles from previous versions
-    document.documentElement.style.removeProperty('--primary-color');
-    document.documentElement.style.removeProperty('--primary-glow');
+    // Small delay to ensure Telegram SDK has fully parsed the URL hash
+    const timer = setTimeout(initializeApp, 150);
+    return () => clearTimeout(timer);
   }, []);
 
   // Sync state to DOM and localStorage
