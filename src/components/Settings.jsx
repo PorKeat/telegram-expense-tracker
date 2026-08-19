@@ -582,7 +582,7 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
       <h3 style={{ marginBottom: '16px' }}>Automation</h3>
       <div className="glass-card flex-col gap-md" style={{ marginBottom: '24px' }}>
         <button 
-          className="button flex-row space-between" 
+          className="button button-secondary flex-row space-between" 
           onClick={onOpenSubscriptions}
           style={{ width: '100%', padding: '16px' }}
         >
