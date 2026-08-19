@@ -12,7 +12,7 @@ import Reports from '../components/Reports';
 import BottomNav from '../components/BottomNav';
 import Settings from '../components/Settings';
 import Dialog from '../components/Dialog';
-import LoadingSkeleton from '../components/LoadingSkeleton';
+import SplashScreen from '../components/SplashScreen';
 
 function App() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
@@ -77,6 +77,8 @@ function App() {
       setStorageKey(dynamicKey);
 
       const fetchExpenses = async () => {
+        const startTime = Date.now();
+        
         const { data, error } = await supabase
           .from('expenses')
           .select('*')
@@ -102,7 +104,14 @@ function App() {
           });
         }
 
-        setIsInitialLoading(false);
+        // Guarantee splash screen shows for at least 1.5 seconds
+        const elapsedTime = Date.now() - startTime;
+        const minLoadingTime = 1500;
+        if (elapsedTime < minLoadingTime) {
+          setTimeout(() => setIsInitialLoading(false), minLoadingTime - elapsedTime);
+        } else {
+          setIsInitialLoading(false);
+        }
       };
       
       fetchExpenses();
@@ -314,7 +323,7 @@ function App() {
 
   const renderContent = () => {
     if (isInitialLoading) {
-      return <LoadingSkeleton />;
+      return <SplashScreen />;
     }
 
     switch (activeTab) {
