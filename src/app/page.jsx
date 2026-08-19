@@ -55,6 +55,13 @@ function App() {
         window.Telegram.WebApp.ready();
         window.Telegram.WebApp.expand();
 
+        try {
+          if (window.Telegram.WebApp.requestWriteAccess && !localStorage.getItem('telegram_write_access_requested')) {
+            window.Telegram.WebApp.requestWriteAccess();
+            localStorage.setItem('telegram_write_access_requested', 'true');
+          }
+        } catch(e) {}
+
         const initData = window.Telegram.WebApp.initDataUnsafe || {};
         if (initData.user?.id) uid = initData.user.id.toString();
         if (initData.chat?.id) cid = initData.chat.id.toString();
@@ -159,6 +166,21 @@ function App() {
       
       if (newTotal > limit) {
         const message = `⚠️ Budget Warning! This expense brings your monthly total to ${currency}${(newTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2})}, exceeding your limit of ${currency}${(limit * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2})}.`;
+        
+        // Send a direct Telegram Bot Message if connected
+        if (telegramUserId !== 'private' && telegramUserId !== 'null') {
+          const formattedMessage = `🚨 <b>BUDGET EXCEEDED</b>\n━━━━━━━━━━━━━━━\n• <b>Item:</b> ${expense.item}\n• <b>Cost:</b> ${currency}${(expense.total * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2})}\n• <b>Current Total:</b> ${currency}${(newTotal * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2})}\n• <b>Monthly Limit:</b> ${currency}${(limit * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2})}\n━━━━━━━━━━━━━━━\n⚠️ <i>You are ${currency}${((newTotal - limit) * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2})} over budget!</i>`;
+          
+          fetch('/api/notify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: telegramUserId,
+              text: formattedMessage
+            })
+          }).catch(console.error);
+        }
+
         try {
           if (window.Telegram?.WebApp?.showAlert) {
             window.Telegram.WebApp.showAlert(message);
