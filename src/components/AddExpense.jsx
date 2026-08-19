@@ -12,6 +12,7 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
     return new Date().toISOString().split('T')[0];
   };
   const [date, setDate] = useState(getInitialDate());
+  const [isRecurring, setIsRecurring] = useState(initialData?.is_recurring || false);
   
   const total = (parseFloat(price || 0) * quantity);
 
@@ -29,7 +30,8 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
       quantity,
       total: basePrice * quantity,
       category,
-      date: dateObj.toISOString()
+      date: dateObj.toISOString(),
+      is_recurring: isRecurring
     });
   };
 
@@ -109,9 +111,22 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
               />
             </div>
           </div>
+          
+          <div className="flex-row gap-sm" style={{ alignItems: 'center', marginTop: '8px', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
+            <input 
+              type="checkbox" 
+              id="recurring" 
+              checked={isRecurring}
+              onChange={e => setIsRecurring(e.target.checked)}
+              style={{ width: '20px', height: '20px', accentColor: 'var(--primary-color)' }}
+            />
+            <label htmlFor="recurring" className="text-small" style={{ cursor: 'pointer', flex: 1, color: isRecurring ? 'var(--primary-color)' : 'var(--text-primary)' }}>
+              Monthly Subscription
+            </label>
+          </div>
         </div>
 
-        <button className="button" onClick={handleSave} style={{ padding: '20px' }}>
+        <button className="button" onClick={handleSave} disabled={!item || !price || !date}>
           <Check size={20} /> Save Expense
         </button>
       </div>
