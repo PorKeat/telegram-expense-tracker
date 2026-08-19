@@ -127,16 +127,17 @@ export default function Subscriptions({ initData, currency, exchangeRate, catego
     }
   };
 
+
   return (
-    <div className="app-content animate-fade-in">
+    <div className="app-content animate-fade-in" style={{ paddingBottom: '100px' }}>
       <div className="header flex-row space-between" style={{ paddingTop: '20px', paddingBottom: '20px', alignItems: 'center' }}>
         <div className="flex-row gap-sm" style={{ alignItems: 'center' }}>
-          <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
-            <X size={24} />
+          <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: 0 }}>
+            <X size={28} />
           </button>
-          <h2 style={{ margin: 0, fontSize: '22px' }}>Subscriptions</h2>
+          <h2 style={{ margin: 0, fontSize: '24px' }}>Subscriptions</h2>
         </div>
-        <button className="button flex-row gap-xs" onClick={() => openForm()} style={{ padding: '8px 16px', borderRadius: '100px', fontSize: '14px' }}>
+        <button className="button button-secondary flex-row gap-xs" onClick={() => openForm()} style={{ padding: '6px 14px', borderRadius: '100px', fontSize: '13px' }}>
           <Plus size={16} /> Add
         </button>
       </div>
@@ -145,45 +146,45 @@ export default function Subscriptions({ initData, currency, exchangeRate, catego
         <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>Loading...</div>
       ) : subscriptions.length === 0 ? (
         <div className="empty-state" style={{ textAlign: 'center', padding: '60px 20px' }}>
-          <div style={{ background: 'var(--card-bg)', width: '80px', height: '80px', borderRadius: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+          <div style={{ background: 'var(--surface-color)', width: '80px', height: '80px', borderRadius: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
             <Power size={32} color="var(--primary-color)" />
           </div>
           <h3 style={{ marginBottom: '12px' }}>No Subscriptions Yet</h3>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>Add your monthly bills (Netflix, Gym, Rent) and we will automatically log them for you.</p>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: 1.5 }}>Add your monthly bills (Netflix, Gym, Rent) and we will automatically log them for you.</p>
         </div>
       ) : (
-        <div className="flex-col gap-md">
+        <div className="glass-card" style={{ padding: '0 var(--spacing-lg)' }}>
           {subscriptions.map(sub => (
-            <div key={sub.id} className="card" style={{ padding: '16px', opacity: sub.is_active ? 1 : 0.6, borderLeft: sub.is_active ? '4px solid var(--primary-color)' : '4px solid var(--border-color)' }}>
-              <div className="flex-row space-between" style={{ marginBottom: '12px' }}>
-                <div className="flex-row gap-sm">
-                  <div style={{ background: 'var(--bg-color)', width: '40px', height: '40px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
-                    {categories.find(c => c.name === sub.category)?.icon || '🔄'}
+            <div key={sub.id} className="expense-item" style={{ opacity: sub.is_active ? 1 : 0.6 }}>
+              <div className="flex-row gap-md" style={{ flex: 1, padding: '8px 0' }}>
+                <div className="expense-icon" style={{ opacity: sub.is_active ? 1 : 0.5 }}>
+                  {categories.find(c => c.name === sub.category)?.icon || '🔄'}
+                </div>
+                <div className="flex-col" style={{ flex: 1 }}>
+                  <div className="flex-row space-between" style={{ alignItems: 'center' }}>
+                    <h3 style={{ fontSize: '16px', margin: 0, color: sub.is_active ? 'var(--text-primary)' : 'var(--text-secondary)' }}>{sub.name}</h3>
+                    <h3 style={{ fontSize: '16px', margin: 0, color: sub.is_active ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+                      {currency}{(sub.amount * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                    </h3>
                   </div>
-                  <div>
-                    <div style={{ fontWeight: '600', fontSize: '16px' }}>{sub.name}</div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{sub.billing_cycle === 'monthly' ? 'Monthly' : 'Yearly'}</div>
+                  
+                  <div className="flex-row space-between" style={{ alignItems: 'center', marginTop: '4px' }}>
+                    <p className="text-small" style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Calendar size={12} /> {sub.billing_cycle === 'monthly' ? 'Monthly' : 'Yearly'} • Next: {format(parseISO(sub.next_billing_date), 'MMM do')}
+                    </p>
+                    
+                    <div className="flex-row gap-md">
+                      <button onClick={() => handleToggleActive(sub)} style={{ background: 'none', border: 'none', color: sub.is_active ? 'var(--primary-color)' : 'var(--text-secondary)', cursor: 'pointer', display: 'flex' }}>
+                        <Power size={16} />
+                      </button>
+                      <button onClick={() => openForm(sub)} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', display: 'flex' }}>
+                        <Edit2 size={16} />
+                      </button>
+                      <button onClick={() => handleDelete(sub.id)} style={{ background: 'none', border: 'none', color: 'var(--danger-color)', cursor: 'pointer', display: 'flex' }}>
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <div style={{ fontWeight: '700', fontSize: '18px' }}>
-                  {currency}{(sub.amount * exchangeRate).toLocaleString(undefined, {minimumFractionDigits: 2})}
-                </div>
-              </div>
-              
-              <div className="flex-row space-between" style={{ padding: '12px', background: 'var(--bg-color)', borderRadius: 'var(--radius-sm)' }}>
-                <div className="flex-row gap-sm" style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                  <Calendar size={14} /> Next: {format(parseISO(sub.next_billing_date), 'MMM do, yyyy')}
-                </div>
-                <div className="flex-row gap-sm">
-                  <button className="icon-btn" onClick={() => handleToggleActive(sub)} style={{ width: '30px', height: '30px', background: sub.is_active ? 'var(--card-bg)' : 'rgba(255, 69, 58, 0.1)', color: sub.is_active ? 'var(--text-color)' : 'var(--danger-color)' }}>
-                    <Power size={14} />
-                  </button>
-                  <button className="icon-btn" onClick={() => openForm(sub)} style={{ width: '30px', height: '30px' }}>
-                    <Edit2 size={14} />
-                  </button>
-                  <button className="icon-btn" onClick={() => handleDelete(sub.id)} style={{ width: '30px', height: '30px', color: 'var(--danger-color)' }}>
-                    <Trash2 size={14} />
-                  </button>
                 </div>
               </div>
             </div>
@@ -193,55 +194,61 @@ export default function Subscriptions({ initData, currency, exchangeRate, catego
 
       {/* Form Modal */}
       {isFormOpen && (
-        <div className="modal-overlay" style={{ zIndex: 2000 }} onClick={() => setIsFormOpen(false)}>
-          <div className="bottom-sheet" style={{ height: 'auto', paddingBottom: 'max(env(safe-area-inset-bottom), 24px)' }} onClick={e => e.stopPropagation()}>
-            <div className="header flex-row space-between" style={{ padding: '24px 24px 0' }}>
+        <div className="modal-overlay" onClick={() => setIsFormOpen(false)}>
+          <div className="bottom-sheet" onClick={e => e.stopPropagation()} style={{ paddingBottom: '24px', maxHeight: '92vh' }}>
+            <div className="header flex-row space-between" style={{ padding: '20px 24px 12px 24px' }}>
               <h2>{editingSub ? 'Edit Subscription' : 'New Subscription'}</h2>
-              <button className="icon-btn" onClick={() => setIsFormOpen(false)}><X size={24} /></button>
+              <button onClick={() => setIsFormOpen(false)} style={{ background: 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer' }}>
+                <X size={24} />
+              </button>
             </div>
             
-            <form onSubmit={handleSave} style={{ padding: '24px' }}>
-              <div className="form-group" style={{ marginBottom: '16px' }}>
-                <label>Name (e.g. Netflix)</label>
-                <input type="text" value={name} onChange={e => setName(e.target.value)} required className="input" placeholder="Subscription Name" />
-              </div>
-              
-              <div className="form-group" style={{ marginBottom: '16px' }}>
-                <label>Amount ({currency})</label>
-                <div style={{ position: 'relative' }}>
-                  <span style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }}>{currency}</span>
-                  <input type="number" value={amount} onChange={e => setAmount(e.target.value)} required step="0.01" min="0.01" className="input" style={{ paddingLeft: '40px' }} placeholder="0.00" />
-                </div>
-              </div>
-              
-              <div className="flex-row gap-md" style={{ marginBottom: '16px' }}>
-                <div className="form-group" style={{ flex: 1 }}>
-                  <label>Category</label>
-                  <select value={category} onChange={e => setCategory(e.target.value)} className="input" style={{ appearance: 'none' }}>
-                    {categories.map(c => (
-                      <option key={c.name} value={c.name}>{c.icon} {c.name}</option>
-                    ))}
-                  </select>
+            <div className="app-content hide-scrollbar" style={{ padding: '0 24px 16px 24px', flex: '1 1 auto', overflowY: 'auto' }}>
+              <div className="glass-card flex-col gap-md" style={{ marginBottom: '16px', padding: '16px' }}>
+                <div className="flex-col gap-sm">
+                  <label className="text-small">Name (e.g. Netflix)</label>
+                  <input type="text" value={name} onChange={e => setName(e.target.value)} required className="input" placeholder="Subscription Name" />
                 </div>
                 
-                <div className="form-group" style={{ flex: 1 }}>
-                  <label>Cycle</label>
-                  <select value={billingCycle} onChange={e => setBillingCycle(e.target.value)} className="input" style={{ appearance: 'none' }}>
-                    <option value="monthly">Monthly</option>
-                    <option value="yearly">Yearly</option>
-                  </select>
+                <div className="flex-col gap-sm">
+                  <label className="text-small">Amount ({currency})</label>
+                  <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                    <span style={{ position: 'absolute', left: '16px', color: 'var(--text-secondary)' }}>{currency}</span>
+                    <input type="number" value={amount} onChange={e => setAmount(e.target.value)} required step="0.01" min="0.01" className="input" style={{ paddingLeft: '32px', width: '100%' }} placeholder="0.00" />
+                  </div>
+                </div>
+                
+                <div className="flex-row gap-md">
+                  <div className="flex-col gap-sm" style={{ flex: 1 }}>
+                    <label className="text-small">Category</label>
+                    <select value={category} onChange={e => setCategory(e.target.value)} className="input" style={{ appearance: 'none', width: '100%' }}>
+                      {categories.map(c => (
+                        <option key={c.name} value={c.name}>{c.icon} {c.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div className="flex-col gap-sm" style={{ flex: 1 }}>
+                    <label className="text-small">Cycle</label>
+                    <select value={billingCycle} onChange={e => setBillingCycle(e.target.value)} className="input" style={{ appearance: 'none', width: '100%' }}>
+                      <option value="monthly">Monthly</option>
+                      <option value="yearly">Yearly</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="flex-col gap-sm">
+                  <label className="text-small">Next Billing Date</label>
+                  <input type="date" value={nextBillingDate} onChange={e => setNextBillingDate(e.target.value)} required className="input" />
                 </div>
               </div>
-              
-              <div className="form-group" style={{ marginBottom: '24px' }}>
-                <label>Next Billing Date</label>
-                <input type="date" value={nextBillingDate} onChange={e => setNextBillingDate(e.target.value)} required className="input" />
-              </div>
-              
-              <button type="submit" className="button button-primary" style={{ width: '100%', padding: '16px' }}>
+            </div>
+            
+            <div style={{ padding: '0 24px 24px 24px', flexShrink: 0 }}>
+              <button type="submit" onClick={handleSave} className="button" style={{ width: '100%' }} disabled={!name || !amount || !nextBillingDate}>
                 <Check size={20} /> Save Subscription
               </button>
-            </form>
+            </div>
           </div>
         </div>
       )}
