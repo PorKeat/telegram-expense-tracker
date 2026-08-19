@@ -2,6 +2,7 @@ import './globals.css';
 import Script from 'next/script';
 
 export const metadata = {
+  metadataBase: new URL(process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')),
   title: 'Spendly Telegram Mini App',
   description: 'Expense tracker for Telegram',
   openGraph: {
