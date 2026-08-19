@@ -486,7 +486,8 @@ const handleUpdateNotificationSettings = async (newSettings) => {
                   setDialogConfig={setDialogConfig}
                   notificationSettings={notificationSettings}
                   setNotificationSettings={handleUpdateNotificationSettings}
-               />;
+                 onOpenSubscriptions={() => setShowSubscriptions(true)}
+        />;
       default:
         return <Home expenses={expenses} currency={currency} exchangeRate={exchangeRate} spendLimit={spendLimit} allCategories={allCategories} />;
     }

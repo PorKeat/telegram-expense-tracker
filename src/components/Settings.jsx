@@ -5,7 +5,7 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
-export default function Settings({ currency, setCurrency, customExchangeRate, setCustomExchangeRate, spendLimit, setSpendLimit, customCategories, setCustomCategories, theme, setTheme, expenses, onWipeData, onImportData, setDialogConfig, notificationSettings = { budget_alerts: true, report_frequency: 'weekly' }, setNotificationSettings }) {
+export default function Settings({ currency, setCurrency, customExchangeRate, setCustomExchangeRate, spendLimit, setSpendLimit, customCategories, setCustomCategories, theme, setTheme, expenses, onWipeData, onImportData, setDialogConfig, notificationSettings = { budget_alerts: true, report_frequency: 'weekly' }, setNotificationSettings, onOpenSubscriptions }) {
   const [newCatName, setNewCatName] = useState('');
   const [newCatEmoji, setNewCatEmoji] = useState('🎮');
   const [pendingImport, setPendingImport] = useState(null);
