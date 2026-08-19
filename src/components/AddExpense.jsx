@@ -1,11 +1,19 @@
 import { useState } from 'react';
 import { X, Check } from 'lucide-react';
 
-export default function AddExpense({ onClose, onSave, initialData, currency = '$', exchangeRate = 1, allCategories = [] }) {
+export default function AddExpense({ initialData, onClose, onSave, globalCurrency, customExchangeRate, allCategories = [] }) {
   const [item, setItem] = useState(initialData?.item || '');
-  const [price, setPrice] = useState(initialData?.price ? (initialData.price * exchangeRate).toString() : '');
+  const getInitialPrice = () => {
+    if (!initialData?.price) return '';
+    if (globalCurrency === '៛') {
+      return (initialData.price * customExchangeRate).toString();
+    }
+    return initialData.price.toString();
+  };
+  const [price, setPrice] = useState(getInitialPrice());
   const [quantity, setQuantity] = useState(initialData?.quantity || 1);
-  const [category, setCategory] = useState(initialData?.category || 'Food & Drink');
+  const [category, setCategory] = useState(initialData?.category || (allCategories.length > 0 ? allCategories[0].name : ''));
+  const [inputCurrency, setInputCurrency] = useState(globalCurrency);
   
   const getInitialDate = () => {
     if (initialData?.date) return initialData.date.split('T')[0];
@@ -21,7 +29,12 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
     
     // Convert the date string (YYYY-MM-DD) to an ISO string for storage
     const dateObj = new Date(date);
-    const basePrice = parseFloat(price) / exchangeRate;
+    
+    // Always store base price in USD
+    let basePrice = parseFloat(price);
+    if (inputCurrency === '៛') {
+      basePrice = basePrice / customExchangeRate;
+    }
     
     onSave({
       id: initialData?.id || Date.now(),
@@ -52,9 +65,9 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
           {/* Main Total Display */}
           <div className="flex-col" style={{ alignItems: 'center', marginBottom: '4px' }}>
             <p className="text-secondary" style={{ textTransform: 'uppercase', letterSpacing: '1px', fontSize: '11px', fontWeight: 600 }}>Total Amount</p>
-            <h1 style={{ fontSize: '42px', color: 'var(--primary-color)', fontWeight: 300, letterSpacing: '-1px', margin: '4px 0' }}>{currency}{total.toLocaleString(undefined, currency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0})}</h1>
+            <h1 style={{ fontSize: '42px', color: 'var(--primary-color)', fontWeight: 300, letterSpacing: '-1px', margin: '4px 0' }}>{inputCurrency}{total.toLocaleString(undefined, inputCurrency === '$' ? {minimumFractionDigits: 2, maximumFractionDigits: 2} : {minimumFractionDigits: 0, maximumFractionDigits: 0})}</h1>
             {quantity > 1 && (
-              <p className="text-small" style={{ margin: 0 }}>{quantity} × {currency}{price || '0.00'}</p>
+              <p className="text-small" style={{ margin: 0 }}>{quantity} × {inputCurrency}{price || '0.00'}</p>
             )}
           </div>
 
@@ -71,7 +84,38 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
 
           <div className="flex-row gap-md">
             <div className="flex-col gap-sm" style={{ flex: 2 }}>
-              <label className="text-small">Unit Price ({currency})</label>
+              <div className="flex-row space-between" style={{ alignItems: 'center' }}>
+                <label className="text-small">Unit Price ({inputCurrency})</label>
+                <div 
+                  onClick={() => {
+                    if (price) {
+                      const numPrice = parseFloat(price);
+                      if (inputCurrency === '$') {
+                        setPrice(Math.round(numPrice * customExchangeRate).toString());
+                      } else {
+                        setPrice((numPrice / customExchangeRate).toFixed(2));
+                      }
+                    }
+                    setInputCurrency(inputCurrency === '$' ? '៛' : '$');
+                  }}
+                  style={{ 
+                    background: 'rgba(255,255,255,0.05)', 
+                    border: '1px solid var(--surface-border)', 
+                    borderRadius: '8px', 
+                    padding: '4px 8px', 
+                    fontSize: '12px', 
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    userSelect: 'none'
+                  }}
+                >
+                  <span style={{ color: inputCurrency === '$' ? 'var(--primary-color)' : 'var(--text-tertiary)', fontWeight: inputCurrency === '$' ? 600 : 400 }}>$</span>
+                  <span style={{ color: 'var(--surface-border)' }}>|</span>
+                  <span style={{ color: inputCurrency === '៛' ? 'var(--primary-color)' : 'var(--text-tertiary)', fontWeight: inputCurrency === '៛' ? 600 : 400 }}>៛</span>
+                </div>
+              </div>
               <input 
                 type="number" 
                 placeholder="0.00" 

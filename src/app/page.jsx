@@ -321,8 +321,8 @@ function App() {
         <AddExpense 
           onClose={() => setShowAddModal(false)} 
           onSave={handleAddExpense}
-          currency={currency}
-          exchangeRate={exchangeRate}
+          globalCurrency={currency}
+          customExchangeRate={customExchangeRate}
           allCategories={allCategories}
         />
       )}
@@ -332,8 +332,8 @@ function App() {
           initialData={editingExpense}
           onClose={() => setEditingExpense(null)} 
           onSave={handleUpdateExpense}
-          currency={currency}
-          exchangeRate={exchangeRate}
+          globalCurrency={currency}
+          customExchangeRate={customExchangeRate}
           allCategories={allCategories}
         />
       )}
