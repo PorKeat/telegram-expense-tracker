@@ -113,23 +113,30 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
           </div>
           
           <div className="flex-row gap-sm" style={{ alignItems: 'center', marginTop: '8px', padding: '12px', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid var(--surface-border)' }}>
-            <input 
-              type="checkbox" 
-              id="recurring" 
-              checked={isRecurring}
-              onChange={e => setIsRecurring(e.target.checked)}
-              style={{ width: '24px', height: '24px', accentColor: 'var(--primary-color)', WebkitAppearance: 'auto', appearance: 'auto', margin: 0 }}
-            />
-            <label htmlFor="recurring" className="text-small" style={{ cursor: 'pointer', flex: 1, color: isRecurring ? 'var(--primary-color)' : 'var(--text-primary)' }}>
+            <div 
+              onClick={() => setIsRecurring(!isRecurring)}
+              style={{
+                width: '24px', height: '24px', borderRadius: '6px',
+                border: isRecurring ? 'none' : '2px solid var(--text-tertiary)',
+                background: isRecurring ? 'var(--primary-color)' : 'transparent',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', transition: 'all 0.2s flex-shrink-0'
+              }}
+            >
+              {isRecurring && <Check size={16} color="var(--surface-solid)" />}
+            </div>
+            <label onClick={() => setIsRecurring(!isRecurring)} className="text-small" style={{ cursor: 'pointer', flex: 1, color: isRecurring ? 'var(--primary-color)' : 'var(--text-primary)', userSelect: 'none' }}>
               Monthly Subscription
             </label>
           </div>
         </div>
+        </div>
 
-        <button className="button" onClick={handleSave} disabled={!item || !price || !date}>
-          <Check size={20} /> Save Expense
-        </button>
-      </div>
+        <div style={{ padding: '0 24px 24px 24px', flexShrink: 0 }}>
+          <button className="button" onClick={handleSave} disabled={!item || !price || !date}>
+            <Check size={20} /> Save Expense
+          </button>
+        </div>
       </div>
     </div>
   );
