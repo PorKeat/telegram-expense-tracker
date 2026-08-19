@@ -578,6 +578,21 @@ export default function Settings({ currency, setCurrency, customExchangeRate, se
         </div>
       </div>
 
+      
+      <h3 style={{ marginBottom: '16px' }}>Automation</h3>
+      <div className="glass-card flex-col gap-md" style={{ marginBottom: '24px' }}>
+        <button 
+          className="button flex-row space-between" 
+          onClick={onOpenSubscriptions}
+          style={{ width: '100%', padding: '16px' }}
+        >
+          <div className="flex-row gap-sm" style={{ fontWeight: 600 }}>
+            <Power size={20} color="var(--primary-color)" /> Smart Subscriptions
+          </div>
+          <span className="text-secondary" style={{ fontSize: '14px' }}>Manage &gt;</span>
+        </button>
+      </div>
+
       <h3 style={{ marginBottom: '16px' }}>Data Management</h3>
       <div className="glass-card flex-col gap-md">
         
