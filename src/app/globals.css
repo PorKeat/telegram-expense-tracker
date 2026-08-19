@@ -233,6 +233,14 @@ h3 { font-size: 18px; font-weight: 500; letter-spacing: -0.2px; color: var(--tex
 }
 .app-content::-webkit-scrollbar { display: none; }
 
+/* Hide scrollbar utility */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
 .header { padding-bottom: var(--spacing-lg); }
 .flex-row { display: flex; flex-direction: row; align-items: center; }
 .flex-col { display: flex; flex-direction: column; }

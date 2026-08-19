@@ -47,7 +47,7 @@ export default function AddExpense({ onClose, onSave, initialData, currency = '$
           </button>
         </div>
 
-        <div className="app-content" style={{ padding: '0 24px 24px 24px', flex: '0 1 auto', overflowY: 'auto' }}>
+        <div className="app-content hide-scrollbar" style={{ padding: '0 24px 16px 24px', flex: '0 1 auto', overflowY: 'auto' }}>
           <div className="glass-card flex-col gap-md" style={{ marginBottom: '16px', padding: '16px' }}>
           {/* Main Total Display */}
           <div className="flex-col" style={{ alignItems: 'center', marginBottom: '4px' }}>

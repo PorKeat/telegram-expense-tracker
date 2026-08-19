@@ -127,7 +127,7 @@ export default function History({ expenses, currency, exchangeRate, onEdit, onDe
               </button>
             </div>
 
-            <div className="flex-col gap-lg" style={{ overflowY: 'auto', paddingBottom: '16px' }}>
+            <div className="flex-col gap-lg hide-scrollbar" style={{ overflowY: 'auto', paddingBottom: '16px' }}>
               <div className="flex-col gap-sm">
                 <label className="text-secondary text-small">Search Items</label>
                 <div className="flex-row gap-sm" style={{ background: 'var(--surface-elevated)', padding: '12px 16px', borderRadius: 'var(--radius-md)', border: '1px solid var(--surface-border)', boxShadow: 'inset 0 2px 6px rgba(0,0,0,0.1)' }}>
