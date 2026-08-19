@@ -230,10 +230,42 @@ export default function Subscriptions({ initData, currency, exchangeRate, catego
                   
                   <div className="flex-col gap-sm" style={{ flex: 1 }}>
                     <label className="text-small">Cycle</label>
-                    <select value={billingCycle} onChange={e => setBillingCycle(e.target.value)} className="input" style={{ appearance: 'none', width: '100%' }}>
-                      <option value="monthly">Monthly</option>
-                      <option value="yearly">Yearly</option>
-                    </select>
+                    <div className="flex-row gap-xs" style={{ background: 'var(--surface-color)', padding: '4px', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', height: '48px' }}>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.preventDefault(); setBillingCycle('monthly'); }}
+                        style={{
+                          flex: 1,
+                          borderRadius: 'var(--radius-sm)',
+                          border: 'none',
+                          background: billingCycle === 'monthly' ? 'var(--primary-color)' : 'transparent',
+                          color: billingCycle === 'monthly' ? 'var(--bg-color)' : 'var(--text-secondary)',
+                          fontWeight: billingCycle === 'monthly' ? 600 : 400,
+                          fontSize: '14px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        Monthly
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.preventDefault(); setBillingCycle('yearly'); }}
+                        style={{
+                          flex: 1,
+                          borderRadius: 'var(--radius-sm)',
+                          border: 'none',
+                          background: billingCycle === 'yearly' ? 'var(--primary-color)' : 'transparent',
+                          color: billingCycle === 'yearly' ? 'var(--bg-color)' : 'var(--text-secondary)',
+                          fontWeight: billingCycle === 'yearly' ? 600 : 400,
+                          fontSize: '14px',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        Yearly
+                      </button>
+                    </div>
                   </div>
                 </div>
                 
