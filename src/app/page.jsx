@@ -16,6 +16,7 @@ import SplashScreen from '../components/SplashScreen';
 
 function App() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [isFadingOut, setIsFadingOut] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
   const [expenses, setExpenses] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -104,13 +105,19 @@ function App() {
           });
         }
 
-        // Guarantee splash screen shows for at least 1.5 seconds
+        // Guarantee splash screen shows for a smooth duration, then trigger fade out
         const elapsedTime = Date.now() - startTime;
-        const minLoadingTime = 1500;
+        const minLoadingTime = 1200;
+        
+        const finishLoading = () => {
+          setIsFadingOut(true);
+          setTimeout(() => setIsInitialLoading(false), 400); // Wait for fade out animation
+        };
+
         if (elapsedTime < minLoadingTime) {
-          setTimeout(() => setIsInitialLoading(false), minLoadingTime - elapsedTime);
+          setTimeout(finishLoading, minLoadingTime - elapsedTime);
         } else {
-          setIsInitialLoading(false);
+          finishLoading();
         }
       };
       
@@ -323,7 +330,7 @@ function App() {
 
   const renderContent = () => {
     if (isInitialLoading) {
-      return <SplashScreen />;
+      return <SplashScreen isFadingOut={isFadingOut} />;
     }
 
     switch (activeTab) {
