@@ -454,6 +454,18 @@ const handleUpdateNotificationSettings = async (newSettings) => {
       return <SplashScreen isFadingOut={isFadingOut} />;
     }
 
+    if (showSubscriptions) {
+      return (
+        <Subscriptions 
+          initData={initData}
+          currency={currency}
+          exchangeRate={currency === 'KHR' ? customExchangeRate : 1}
+          categories={allCategories}
+          onBack={() => setShowSubscriptions(false)}
+        />
+      );
+    }
+
     switch (activeTab) {
       case 'home':
         return <Home expenses={expenses} currency={currency} exchangeRate={exchangeRate} spendLimit={spendLimit} allCategories={allCategories} />;
