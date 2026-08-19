@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Download, Trash2, DollarSign, Coins, Sun, Moon, Plus, X, Upload, Check, FileText } from 'lucide-react';
+import { Power, Download, Trash2, DollarSign, Coins, Sun, Moon, Plus, X, Upload, Check, FileText } from 'lucide-react';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';

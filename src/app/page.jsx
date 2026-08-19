@@ -11,6 +11,7 @@ import History from '../components/History';
 import Reports from '../components/Reports';
 import BottomNav from '../components/BottomNav';
 import Settings from '../components/Settings';
+import Subscriptions from '../components/Subscriptions';
 import Dialog from '../components/Dialog';
 import SplashScreen from '../components/SplashScreen';
 
@@ -18,6 +19,7 @@ function App() {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
+  const [showSubscriptions, setShowSubscriptions] = useState(false);
   const [expenses, setExpenses] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
